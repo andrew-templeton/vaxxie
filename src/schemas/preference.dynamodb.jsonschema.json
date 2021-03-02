@@ -1,0 +1,44 @@
+{
+  "type": "object",
+  "required": [
+    "userId",
+    "queries",
+    "createdAt"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "userId": {
+      "type": "string"
+    },
+    "queries": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "requestedAt",
+          "latitude",
+          "longitude",
+          "radius"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "requestedAt": {
+            "type": "number"
+          },
+          "latitude": {
+            "type": "number"
+          },
+          "longitude": {
+            "type": "number"
+          },
+          "radius": {
+            "type": "number"
+          }
+        }
+      }
+    },
+    "createdAt": {
+      "type": "number"
+    }
+  }
+}

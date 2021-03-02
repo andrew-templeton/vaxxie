@@ -1,0 +1,76 @@
+{
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "id",
+    "userId",
+    "queries",
+    "createdAt"
+  ],
+  "properties": {
+    "id": {
+      "type": "string"
+    },
+    "userId": {
+      "type": "string"
+    },
+    "queries": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "requestedAt",
+          "geoSearch"
+        ],
+        "properties": {
+          "requestedAt": {
+            "type": "number"
+          },
+          "geoSearch": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "geo_distance"
+            ],
+            "properties": {
+              "geo_distance": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "distance",
+                  "geolocation"
+                ],
+                "properties": {
+                  "distance": {
+                    "type": "string",
+                    "pattern": "^\\d+(\\.\\d+)?(km|mi)$"
+                  },
+                  "geolocation": {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "required": [
+                      "lat",
+                      "lon"
+                    ],
+                    "properties": {
+                      "lat": {
+                        "type": "number"
+                      },
+                      "lon": {
+                        "type": "number"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "createdAt": {
+      "type": "number"
+    }
+  }
+}

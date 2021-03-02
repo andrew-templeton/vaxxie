@@ -1,0 +1,50 @@
+{
+  "type": "array",
+  "minItems": 1,
+  "items": {
+    "type": "object",
+    "required": [
+      "from",
+      "url"
+    ],
+    "additionalProperties": false,
+    "properties": {
+      "utime": {
+        "type": "number"
+      },
+      "provider": {
+        "type": "string",
+        "minLength": 1
+      },
+      "from": {
+        "type": "string",
+        "minLength": 1
+      },
+      "latitude": {
+        "type": "number"
+      },
+      "longitude": {
+        "type": "number"
+      },
+      "zipcode": {
+        "type": "string",
+        "pattern": "^\\d{5}$"
+      },
+      "address": {
+        "type": "string",
+        "minLength": 1
+      },
+      "location": {
+        "type": "string",
+        "minLength": 1
+      },
+      "url": {
+        "type": "string",
+        "pattern": "^https?://"
+      },
+      "slots": {
+        "type": "number"
+      }
+    }
+  }
+}

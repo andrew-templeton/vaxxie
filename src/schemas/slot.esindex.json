@@ -1,0 +1,33 @@
+{
+  "mappings": {
+    "properties": {
+      "id": {
+        "type": "keyword"
+      },
+      "utime": {
+        "type": "date"
+      },
+      "provider": {
+        "type": "keyword"
+      },
+      "from": {
+        "type": "keyword"
+      },
+      "geolocation": {
+        "type": "geo_point"
+      },
+      "address": {
+        "type": "keyword"
+      },
+      "location": {
+        "type": "keyword"
+      },
+      "url": {
+        "type": "keyword"
+      },
+      "slots": {
+        "type": "short"
+      }
+    }
+  }
+}

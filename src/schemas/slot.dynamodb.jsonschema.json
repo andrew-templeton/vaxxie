@@ -1,0 +1,46 @@
+{
+  "type": "object",
+  "required": [
+    "utime",
+    "provider",
+    "from",
+    "latitude",
+    "longitude",
+    "url",
+    "id"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "id": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{128}$"
+    },
+    "utime": {
+      "type": "number"
+    },
+    "provider": {
+      "type": "string"
+    },
+    "from": {
+      "type": "string"
+    },
+    "latitude": {
+      "type": "number"
+    },
+    "longitude": {
+      "type": "number"
+    },
+    "address": {
+      "type": "string"
+    },
+    "location": {
+      "type": "string"
+    },
+    "url": {
+      "type": "string"
+    },
+    "slots": {
+      "type": "number"
+    }
+  }
+}

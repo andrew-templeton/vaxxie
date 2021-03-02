@@ -1,0 +1,38 @@
+{
+  "name": "vaxxie",
+  "version": "1.0.3",
+  "description": "Vaccination bot",
+  "main": "index.js",
+  "scripts": {
+    "build": "sam build --template ./template.yaml",
+    "deploy": "sam deploy --template-file .aws-sam/build/template.yaml --stack-name vaxxbot3 --parameter-overrides Namespace=Echo EnvironmentPrefix=Vaxxbot VpcSecondOctet=101 --s3-bucket 07bad1ce-5fe6-449f-9e1c-52cd6d38ee6f --capabilities CAPABILITY_IAM CAPABILITY_NAMED_IAM",
+    "kick": "npm run build && npm run deploy"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/andrew-templeton/vaxxie.git"
+  },
+  "keywords": [
+    "aws",
+    "cloudformation",
+    "lambda",
+    "backed",
+    "custom",
+    "resource",
+    "lex",
+    "bot",
+    "chatbot",
+    "bot",
+    "bots"
+  ],
+  "author": "Andrew Templeton <andrw.tmplton@gmail.com> (https://github.com/andrew-templeton)",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/andrew-templeton/vaxxie/issues"
+  },
+  "homepage": "https://github.com/andrew-templeton/vaxxie#readme",
+  "dependencies": {
+    "heb-cheater": "^1.3.3",
+    "jsonschema": "^1.4.0"
+  }
+}

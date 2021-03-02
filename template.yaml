@@ -1,0 +1,844 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: >-
+  Vaxxie!
+Parameters:
+  Namespace:
+    Type: String
+  BotName:
+    Type: String
+    Default: VacccineSearcher
+    Description: >-
+      Change this to do something that requires replacement of the Bot resource,
+      to test it.
+  IntentName:
+    Type: String
+    Default: SearchForVaccine
+    Description: >-
+      Change this to do something that requires replacement of the Intent
+      resource, to test it.
+  IntentDescription:
+    Type: String
+    Default: Intent to order a vaccine search
+    Description: >-
+      Change this for a non-replacement-required Update to the Intent, for
+      testing.
+  BotDescription:
+    Type: String
+    Default: Bot which manages vaccine searches
+    Description: 'Change this for a non-replacement-required Update to the Bot, for testing.'
+  EnvironmentPrefix:
+    Type: String
+  VpcSecondOctet:
+    Type: String
+  AvailabilityZoneAlpha:
+    Type: String
+    Default: us-east-1a
+  AvailabilityZoneBravo:
+    Type: String
+    Default: us-east-1b
+  DomainName:
+    Type: String
+    Default: test
+Resources:
+
+  SecretForSlackKey:
+    Type: AWS::SecretsManager::Secret
+
+  VaccineLambdaLexPermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      Action: lambda:InvokeFunction
+      FunctionName:
+        Ref: UserPreferencePersister
+      Principal: lex.amazonaws.com
+      SourceArn:
+        Fn::Sub: "arn:aws:lex:${AWS::Region}:${AWS::AccountId}:intent:${Namespace}SearchForVaccine:*"
+  SearchForVaccine:
+    DependsOn:
+      - VaccineLambdaLexPermission
+    Type: 'Custom::LexIntent'
+    Properties:
+      ServiceToken:
+        'Fn::ImportValue': cfn-lex-intent-1-0-3-ServiceToken
+      name:
+        Fn::Sub: "${Namespace}${IntentName}"
+      confirmationPrompt:
+        maxAttempts: 1
+        messages:
+          - content: >-
+              Should I begin searching for appointments near {Zipcode}, within {Distance} miles?
+            contentType: PlainText
+      description:
+        Ref: IntentDescription
+      fulfillmentActivity:
+        type: CodeHook
+        codeHook:
+          messageVersion: '1.0'
+          uri:
+            Fn::GetAtt:
+              - UserPreferencePersister
+              - Arn
+      rejectionStatement:
+        messages:
+          - content: 'Okay, I won''t search for this.'
+            contentType: PlainText
+          - content: I canceled your search.
+            contentType: PlainText
+      sampleUtterances:
+        - Find me a vaccine
+        - Where can I get a vaccine within {Distance}
+        - Find appointments within {Distance} of {Zipcode}
+        - I want a vaccine
+        - Please help me find an appointment
+        - Please help me find a vaccine
+        - I want an appointment
+        - Find a vaccine in {Zipcode}
+      slots:
+        - name: Distance
+          description: The distance in miles to allow notifications
+          priority: 1
+          sampleUtterances:
+            - No more than {Distance}
+            - No more than {Distance} miles
+            - I could go up to {Distance} miles
+            - I could go up to {Distance}
+            - I can drive {Distance} miles
+            - Within {Distance}
+            - Within {Distance} please
+          slotConstraint: Required
+          slotType: AMAZON.NUMBER
+          valueElicitationPrompt:
+            maxAttempts: 1
+            messages:
+              - content: How far away is okay to get a vaccine, in miles?
+                contentType: PlainText
+              - content: How far are you willing to travel, in miles, to an appointment?
+                contentType: PlainText
+              - content: The larger the area you're willing to go, the better. How many miles should I search?
+                contentType: PlainText
+        - name: Zipcode
+          description: The zip code of the search origin
+          priority: 2
+          sampleUtterances:
+            - Zip code {Zipcode}
+            - My zip code is {Zipcode}
+            - I live in {Zipcode}
+            - Start search in {Zipcode}
+            - Look in {Zipcode}
+            - Near {Zipcode}
+          slotConstraint: Required
+          slotType: AMAZON.NUMBER
+          valueElicitationPrompt:
+            maxAttempts: 1
+            messages:
+              - content: What is the zip code you would like me to start your search from?
+                contentType: PlainText
+              - content: What is your zip code?
+                contentType: PlainText
+  VaccineBot:
+    Type: 'Custom::LexBot'
+    DependsOn:
+      - SearchForVaccine
+    Properties:
+      ServiceToken:
+        'Fn::ImportValue': cfn-lex-bot-1-0-3-ServiceToken
+      name:
+        'Fn::Sub': '${Namespace}${BotName}'
+      abortStatement:
+        messages:
+          - content: I don't understand. Can you try again?
+            contentType: PlainText
+          - content: 'I''m sorry, I don''t understand.'
+            contentType: PlainText
+      childDirected: true
+      clarificationPrompt:
+        maxAttempts: 1
+        messages:
+          - content: 'I''m sorry, I didn''t hear that. Can you repeate what you just said?'
+            contentType: PlainText
+          - content: Can you say that again?
+            contentType: PlainText
+      description:
+        Ref: BotDescription
+      idleSessionTTLInSeconds: 300
+      intents:
+        - intentName:
+            Ref: SearchForVaccine
+          intentVersion: $LATEST
+      locale: en-US
+      processBehavior: BUILD
+  UserPreferencePersister:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: .
+      Runtime: nodejs12.x
+      Handler: fulfillment.preferences
+      MemorySize: 3008
+      Timeout: 30
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName:
+              Ref: PreferenceTable
+      Environment:
+        Variables:
+          PREFERENCES_TABLE:
+            Ref: PreferenceTable
+  ExternalCrawlerEnpoint:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: .
+      Runtime: nodejs12.x
+      Handler: crawlers.external
+      MemorySize: 3008
+      Timeout: 30
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName:
+              Ref: SlotsTable
+      Environment:
+        Variables:
+          SLOTS_TABLE:
+            Ref: SlotsTable
+      Events:
+        PutSlots:
+          Type: Api
+          Properties:
+            Method: PUT
+            Path: /{provider}/{utime}
+            Auth:
+              ApiKeyRequired: true
+  SeedEsIndex:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: .
+      Runtime: nodejs12.x
+      Handler: seed.es
+      MemorySize: 3008
+      Timeout: 30
+      Environment:
+        Variables:
+          ES_DOMAIN_ENDPOINT:
+            Fn::GetAtt:
+              - ElasticsearchDomain
+              - DomainEndpoint
+          SLOTS_TABLE:
+            Ref: SlotsTable
+          PREFERENCES_TABLE:
+            Ref: PreferenceTable
+          PREFERENCES_INDEX: preferences
+          SLOTS_INDEX: slots
+      VpcConfig:
+        SecurityGroupIds:
+          - Ref: ElasticsearchAccessorGroup
+        SubnetIds:
+          - Ref: PrivateSubnetAlpha
+          - Ref: PrivateSubnetBravo
+  PingCheckEs:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: .
+      Runtime: nodejs12.x
+      Handler: seed.pingEs
+      MemorySize: 3008
+      Timeout: 30
+      Environment:
+        Variables:
+          ES_DOMAIN_ENDPOINT:
+            Fn::GetAtt:
+              - ElasticsearchDomain
+              - DomainEndpoint
+      VpcConfig:
+        SecurityGroupIds:
+          - Ref: ElasticsearchAccessorGroup
+        SubnetIds:
+          - Ref: PrivateSubnetAlpha
+          - Ref: PrivateSubnetBravo
+  SlotStreamHandler:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: .
+      Runtime: nodejs12.x
+      Handler: streamers.slots
+      MemorySize: 3008
+      Timeout: 30
+      Policies:
+        - AWSSecretsManagerGetSecretValuePolicy:
+            SecretArn:
+              Ref: SecretForSlackKey
+        - DynamoDBCrudPolicy:
+            TableName:
+              Ref: SlotsTable
+        - Version: '2012-10-17'
+          Statement:
+            - Effect: "Allow"
+              Action:
+                - "dynamodb:DescribeStream"
+                - "dynamodb:GetRecords"
+                - "dynamodb:GetShardIterator"
+              Resource:
+                - Fn::GetAtt: SlotsTable.StreamArn
+            - Effect: "Allow"
+              Action:
+                - "dynamodb:ListStreams"
+              Resource:
+                - Fn::Sub: "arn:${AWS::Partition}:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${SlotsTable}/stream/*"
+      Environment:
+        Variables:
+          ES_DOMAIN_ENDPOINT:
+            Fn::GetAtt:
+              - ElasticsearchDomain
+              - DomainEndpoint
+          SLOTS_TABLE:
+            Ref: SlotsTable
+          PREFERENCES_TABLE:
+            Ref: PreferenceTable
+          PREFERENCES_INDEX: preferences
+          SLOTS_INDEX: slots
+          SLACK_SECRET:
+            Ref: SecretForSlackKey
+      VpcConfig:
+        SecurityGroupIds:
+          - Ref: ElasticsearchAccessorGroup
+        SubnetIds:
+          - Ref: PrivateSubnetAlpha
+          - Ref: PrivateSubnetBravo
+      Events:
+        HandleNewSlots:
+          Type: DynamoDB
+          Properties:
+            BatchSize: 1000
+            Enabled: true
+            StartingPosition: LATEST
+            Stream:
+              Fn::GetAtt:
+                - SlotsTable
+                - StreamArn
+  PreferenceStreamHandler:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: .
+      Runtime: nodejs12.x
+      Handler: streamers.preferences
+      MemorySize: 256
+      Timeout: 300
+      Environment:
+        Variables:
+          ES_DOMAIN_ENDPOINT:
+            Fn::GetAtt:
+              - ElasticsearchDomain
+              - DomainEndpoint
+          SLOTS_TABLE:
+            Ref: SlotsTable
+          PREFERENCES_TABLE:
+            Ref: PreferenceTable
+          PREFERENCES_INDEX: preferences
+          SLOTS_INDEX: slots
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName:
+              Ref: PreferenceTable
+        - Version: '2012-10-17'
+          Statement:
+            - Effect: "Allow"
+              Action:
+                - "dynamodb:DescribeStream"
+                - "dynamodb:GetRecords"
+                - "dynamodb:GetShardIterator"
+              Resource:
+                - Fn::GetAtt: PreferenceTable.StreamArn
+            - Effect: "Allow"
+              Action:
+                - "dynamodb:ListStreams"
+              Resource:
+                - Fn::Sub: "arn:${AWS::Partition}:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${PreferenceTable}/stream/*"
+      Events:
+        HandleNewSlots:
+          Type: DynamoDB
+          Properties:
+            BatchSize: 1000
+            Enabled: true
+            StartingPosition: LATEST
+            Stream:
+              Fn::GetAtt:
+                - PreferenceTable
+                - StreamArn
+      VpcConfig:
+        SecurityGroupIds:
+          - Ref: ElasticsearchAccessorGroup
+        SubnetIds:
+          - Ref: PrivateSubnetAlpha
+          - Ref: PrivateSubnetBravo
+  HebCrawler:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: .
+      Runtime: nodejs12.x
+      Handler: crawlers.heb
+      MemorySize: 3008
+      Timeout: 30
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName:
+              Ref: SlotsTable
+      Environment:
+        Variables:
+          SLOTS_TABLE:
+            Ref: SlotsTable
+      Events:
+        HebCollector:
+          Type: Schedule
+          Properties:
+            Enabled: true
+            Schedule: rate(5 minutes)
+  SlotsTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      AttributeDefinitions:
+        - AttributeName: id
+          AttributeType: S
+      BillingMode: PAY_PER_REQUEST
+      KeySchema:
+        - AttributeName: id
+          KeyType: HASH
+      StreamSpecification:
+        StreamViewType: NEW_IMAGE
+  PreferenceTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      AttributeDefinitions:
+        - AttributeName: userId
+          AttributeType: S
+      BillingMode: PAY_PER_REQUEST
+      KeySchema:
+        - AttributeName: userId
+          KeyType: HASH
+      StreamSpecification:
+        StreamViewType: NEW_IMAGE
+
+
+
+  ### Authorization key(s)
+  ExternalCrawlerApiUsagePlan:
+    DependsOn:
+      - ServerlessRestApi
+      - ServerlessRestApiProdStage
+    Type: AWS::ApiGateway::UsagePlan
+    Properties:
+      ApiStages:
+        - ApiId:
+            Ref: ServerlessRestApi
+          Stage: Prod
+
+  ExternalCrawlerApiUsagePlanAssociationToApiKey:
+    Type: AWS::ApiGateway::UsagePlanKey
+    Properties:
+      KeyId:
+        Ref: ExternalCrawlerApiKeyJames
+      KeyType: API_KEY
+      UsagePlanId:
+        Ref: ExternalCrawlerApiUsagePlan
+
+
+  ExternalCrawlerApiKeyJames:
+    Type: AWS::ApiGateway::ApiKey
+    DependsOn:
+      - ServerlessRestApi
+      - ServerlessRestApiProdStage
+    Properties:
+      Description:
+        Fn::Sub: 'Base key for traffic manager ${AWS::StackName}'
+      Enabled: true
+      StageKeys:
+        - RestApiId:
+            Ref: ServerlessRestApi
+          StageName: Prod
+
+
+  ExternalCrawlerApiUsagePlanAssociationToApiKeyS:
+    Type: AWS::ApiGateway::UsagePlanKey
+    Properties:
+      KeyId:
+        Ref: ExternalCrawlerApiKeyS
+      KeyType: API_KEY
+      UsagePlanId:
+        Ref: ExternalCrawlerApiUsagePlan
+  ExternalCrawlerApiKeyS:
+    Type: AWS::ApiGateway::ApiKey
+    DependsOn:
+      - ServerlessRestApi
+      - ServerlessRestApiProdStage
+    Properties:
+      Description:
+        Fn::Sub: 'Base key for traffic manager ${AWS::StackName}'
+      Enabled: true
+      StageKeys:
+        - RestApiId:
+            Ref: ServerlessRestApi
+          StageName: Prod
+
+  ####################
+  # Building the VPC #
+  ####################
+
+  ### EIPS
+  GatewayAllocationAlpha:
+    Type: AWS::EC2::EIP
+    Properties:
+      Domain: vpc
+  GatewayAllocationBravo:
+    Type: AWS::EC2::EIP
+    Properties:
+      Domain: vpc
+
+  ### VPC Basic Setup
+  Vpc:
+    Properties:
+      CidrBlock:
+        Fn::Sub: 10.${VpcSecondOctet}.0.0/16
+      EnableDnsHostnames: 'true'
+      EnableDnsSupport: 'true'
+      InstanceTenancy: default
+      Tags:
+      - Key: Name
+        Value:
+          Fn::Sub: "${EnvironmentPrefix}-VPC"
+    Type: AWS::EC2::VPC
+  InternetGateway:
+    DependsOn:
+    - Vpc
+    Properties:
+      Tags:
+      - Key: Name
+        Value:
+          Fn::Sub: "${EnvironmentPrefix}-InternetGateway"
+    Type: AWS::EC2::InternetGateway
+  InternetGatewayAttachment:
+    DependsOn:
+    - Vpc
+    - InternetGateway
+    Properties:
+      InternetGatewayId:
+        Ref: InternetGateway
+      VpcId:
+        Ref: Vpc
+    Type: AWS::EC2::VPCGatewayAttachment
+
+  ### Subnetting
+  PrivateSubnetAlpha:
+    DependsOn:
+    - Vpc
+    - InternetGatewayAttachment
+    Properties:
+      AvailabilityZone:
+        Ref: AvailabilityZoneAlpha
+      CidrBlock:
+        Fn::Sub: 10.${VpcSecondOctet}.0.0/24
+      Tags:
+      - Key: Name
+        Value:
+          Fn::Sub: "${EnvironmentPrefix}-Subnet-Private-Alpha"
+      VpcId:
+        Ref: Vpc
+    Type: AWS::EC2::Subnet
+  PrivateSubnetBravo:
+    DependsOn:
+    - Vpc
+    - InternetGatewayAttachment
+    Properties:
+      AvailabilityZone:
+        Ref: AvailabilityZoneBravo
+      CidrBlock:
+        Fn::Sub: 10.${VpcSecondOctet}.1.0/24
+      Tags:
+      - Key: Name
+        Value:
+          Fn::Sub: "${EnvironmentPrefix}-Subnet-Private-Bravo"
+      VpcId:
+        Ref: Vpc
+    Type: AWS::EC2::Subnet
+  PublicSubnetAlpha:
+    DependsOn:
+    - Vpc
+    - InternetGatewayAttachment
+    Properties:
+      AvailabilityZone:
+        Ref: AvailabilityZoneAlpha
+      CidrBlock:
+        Fn::Sub: 10.${VpcSecondOctet}.3.0/24
+      Tags:
+      - Key: Name
+        Value:
+          Fn::Sub: "${EnvironmentPrefix}-Subnet-Public-Alpha"
+      VpcId:
+        Ref: Vpc
+    Type: AWS::EC2::Subnet
+  PublicSubnetBravo:
+    DependsOn:
+    - Vpc
+    - InternetGatewayAttachment
+    Properties:
+      AvailabilityZone:
+        Ref: AvailabilityZoneBravo
+      CidrBlock:
+        Fn::Sub: 10.${VpcSecondOctet}.4.0/24
+      Tags:
+      - Key: Name
+        Value:
+          Fn::Sub: "${EnvironmentPrefix}-Subnet-Public-Bravo"
+      VpcId:
+        Ref: Vpc
+    Type: AWS::EC2::Subnet
+
+  ### Generate empty route tables
+  RouteTablePrivateAlpha:
+    DependsOn:
+    - Vpc
+    Properties:
+      Tags:
+      - Key: Name
+        Value:
+          Fn::Sub: "${EnvironmentPrefix}-RTB-Private-Alpha"
+      VpcId:
+        Ref: Vpc
+    Type: AWS::EC2::RouteTable
+  RouteTablePrivateBravo:
+    DependsOn:
+    - Vpc
+    Properties:
+      Tags:
+      - Key: Name
+        Value:
+          Fn::Sub: "${EnvironmentPrefix}-RTB-Private-Bravo"
+      VpcId:
+        Ref: Vpc
+    Type: AWS::EC2::RouteTable
+  RouteTablePublicAlpha:
+    DependsOn:
+    - Vpc
+    - InternetGatewayAttachment
+    Properties:
+      Tags:
+      - Key: Name
+        Value:
+          Fn::Sub: "${EnvironmentPrefix}-RTB-Public-Alpha"
+      VpcId:
+        Ref: Vpc
+    Type: AWS::EC2::RouteTable
+  RouteTablePublicBravo:
+    DependsOn:
+    - Vpc
+    - InternetGatewayAttachment
+    Properties:
+      Tags:
+      - Key: Name
+        Value:
+          Fn::Sub: "${EnvironmentPrefix}-RTB-Public-Bravo"
+      VpcId:
+        Ref: Vpc
+    Type: AWS::EC2::RouteTable
+
+  ### Route public spaces to gateway
+  PublicRouteToInternetGatewayAlpha:
+    DependsOn:
+    - InternetGatewayAttachment
+    - RouteTablePublicAlpha
+    Properties:
+      DestinationCidrBlock: 0.0.0.0/0
+      GatewayId:
+        Ref: InternetGateway
+      RouteTableId:
+        Ref: RouteTablePublicAlpha
+    Type: AWS::EC2::Route
+  PublicRouteToInternetGatewayBravo:
+    DependsOn:
+    - InternetGatewayAttachment
+    - RouteTablePublicBravo
+    Properties:
+      DestinationCidrBlock: 0.0.0.0/0
+      GatewayId:
+        Ref: InternetGateway
+      RouteTableId:
+        Ref: RouteTablePublicBravo
+    Type: AWS::EC2::Route
+
+  ### Generate NAT gateways
+  NatGatewayAlpha:
+    DependsOn:
+    - PublicSubnetAlpha
+    Type: AWS::EC2::NatGateway
+    Properties:
+      AllocationId:
+        Fn::GetAtt:
+          - GatewayAllocationAlpha
+          - AllocationId
+      SubnetId:
+        Ref: PublicSubnetAlpha
+      Tags:
+      - Key: Name
+        Value:
+          Fn::Sub: "${EnvironmentPrefix}-NAT-Gateway-Alpha"
+  NatGatewayBravo:
+    DependsOn:
+    - PublicSubnetBravo
+    Type: AWS::EC2::NatGateway
+    Properties:
+      AllocationId:
+        Fn::GetAtt:
+          - GatewayAllocationBravo
+          - AllocationId
+      SubnetId:
+        Ref: PublicSubnetBravo
+      Tags:
+      - Key: Name
+        Value:
+          Fn::Sub: "${EnvironmentPrefix}-NAT-Gateway-Bravo"
+
+  ### Route private to NAT Gateways
+  PrivateRouteToNATGatewayAlpha:
+    DependsOn:
+    - NatGatewayAlpha
+    - RouteTablePrivateAlpha
+    Properties:
+      DestinationCidrBlock: 0.0.0.0/0
+      NatGatewayId:
+        Ref: NatGatewayAlpha
+      RouteTableId:
+        Ref: RouteTablePrivateAlpha
+    Type: AWS::EC2::Route
+  PrivateRouteToNATGatewayBravo:
+    DependsOn:
+    - NatGatewayBravo
+    - RouteTablePrivateBravo
+    Properties:
+      DestinationCidrBlock: 0.0.0.0/0
+      NatGatewayId:
+        Ref: NatGatewayBravo
+      RouteTableId:
+        Ref: RouteTablePrivateBravo
+    Type: AWS::EC2::Route
+
+  ### Bind routing to subnets so no default routing
+  PrivateSubnetAlphaRouteTableAssociation:
+    DependsOn:
+    - RouteTablePrivateAlpha
+    - PrivateSubnetAlpha
+    Properties:
+      RouteTableId:
+        Ref: RouteTablePrivateAlpha
+      SubnetId:
+        Ref: PrivateSubnetAlpha
+    Type: AWS::EC2::SubnetRouteTableAssociation
+  PrivateSubnetBravoRouteTableAssociation:
+    DependsOn:
+    - RouteTablePrivateBravo
+    - PrivateSubnetBravo
+    Properties:
+      RouteTableId:
+        Ref: RouteTablePrivateBravo
+      SubnetId:
+        Ref: PrivateSubnetBravo
+    Type: AWS::EC2::SubnetRouteTableAssociation
+  PublicSubnetAlphaRouteTableAssociation:
+    DependsOn:
+    - RouteTablePublicAlpha
+    - PublicSubnetAlpha
+    Properties:
+      RouteTableId:
+        Ref: RouteTablePublicAlpha
+      SubnetId:
+        Ref: PublicSubnetAlpha
+    Type: AWS::EC2::SubnetRouteTableAssociation
+  PublicSubnetBravoRouteTableAssociation:
+    DependsOn:
+    - RouteTablePublicBravo
+    - PublicSubnetBravo
+    Properties:
+      RouteTableId:
+        Ref: RouteTablePublicBravo
+      SubnetId:
+        Ref: PublicSubnetBravo
+    Type: AWS::EC2::SubnetRouteTableAssociation
+
+
+
+
+
+
+
+  ElasticsearchDomain:
+    Type: AWS::Elasticsearch::Domain
+    Properties:
+      DomainName:
+        Ref: DomainName
+      ElasticsearchClusterConfig:
+        DedicatedMasterEnabled: "true"
+        InstanceCount: "2"
+        ZoneAwarenessEnabled: "true"
+        InstanceType: "m5.large.elasticsearch"
+        DedicatedMasterType: "m5.large.elasticsearch"
+        DedicatedMasterCount: "3"
+      ElasticsearchVersion: "7.9"
+      EBSOptions:
+        EBSEnabled: true
+        VolumeSize: 50
+        VolumeType: "gp2"
+      SnapshotOptions:
+        AutomatedSnapshotStartHour: "0"
+      AccessPolicies:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: "Allow"
+            Principal:
+              AWS: "*"
+            Action: "es:*"
+            Resource:
+              Fn::Sub: "arn:aws:es:${AWS::Region}:${AWS::AccountId}:domain/${DomainName}/*"
+      AdvancedOptions:
+        rest.action.multi.allow_explicit_index: "true"
+      VPCOptions:
+        SubnetIds:
+          - Ref: PrivateSubnetAlpha
+          - Ref: PrivateSubnetBravo
+        SecurityGroupIds:
+          - Ref: ElaticsearchSecurityGroupAllowingAccessors
+
+
+  ElaticsearchSecurityGroupAllowingAccessors:
+    Type: 'AWS::EC2::SecurityGroup'
+    Properties:
+      GroupDescription: Allows access from the ElasticsearchAccessorGroup
+      VpcId:
+        Ref: Vpc
+      SecurityGroupIngress:
+        - FromPort: '443'
+          IpProtocol: tcp
+          ToPort: '443'
+          SourceSecurityGroupId:
+            Ref: ElasticsearchAccessorGroup
+  ElasticsearchAccessorGroup:
+    Type: 'AWS::EC2::SecurityGroup'
+    Properties:
+      GroupDescription: Allows access from the ElasticsearchAccessorGroup
+      VpcId:
+        Ref: Vpc
+      SecurityGroupIngress: []
+      SecurityGroupEgress:
+        - CidrIp: "0.0.0.0/0"
+          FromPort: -1
+          IpProtocol: -1
+          ToPort: -1
+
+Outputs:
+  VaccineBotChecksum:
+    Description: The checksum of the Lex Bot for this stack.
+    Value:
+      'Fn::GetAtt':
+        - VaccineBot
+        - checksum
+  VaccineBotVersion:
+    Description: The version of the Lex Bot for this stack.
+    Value:
+      'Fn::GetAtt':
+        - VaccineBot
+        - version

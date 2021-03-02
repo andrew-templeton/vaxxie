@@ -1,0 +1,56 @@
+{
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "utime",
+    "provider",
+    "from",
+    "geolocation",
+    "url",
+    "id"
+  ],
+  "properties": {
+    "id": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{128}$"
+    },
+    "utime": {
+      "type": "number"
+    },
+    "provider": {
+      "type": "string"
+    },
+    "from": {
+      "type": "string"
+    },
+    "geolocation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "lat",
+        "lon"
+      ],
+      "properties": {
+        "lat": {
+          "type": "number"
+        },
+        "lon": {
+          "type": "number"
+        }
+      }
+    },
+    "address": {
+      "type": "string"
+    },
+    "location": {
+      "type": "string"
+    },
+    "url": {
+      "type": "string",
+      "pattern": "^https?://"
+    },
+    "slots": {
+      "type": "number"
+    }
+  }
+}

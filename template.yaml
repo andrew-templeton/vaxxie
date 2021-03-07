@@ -439,6 +439,49 @@ Resources:
         - what do I need to bring
 
 
+  BookingAppointmentsFAQLambdaPermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      Action: lambda:InvokeFunction
+      FunctionName:
+        Ref: UserQuestionFAQAnswerer
+      Principal: lex.amazonaws.com
+      SourceArn:
+        Fn::Sub: "arn:aws:lex:${AWS::Region}:${AWS::AccountId}:intent:${Namespace}BookingAppointmentsFAQ:*"
+  BookingAppointmentsFAQ:
+    DependsOn:
+      - BookingAppointmentsFAQLambdaPermission
+    Type: 'Custom::LexIntent'
+    Properties:
+      ServiceToken:
+        'Fn::ImportValue': cfn-lex-intent-1-0-4-ServiceToken
+      name:
+        Fn::Sub: "${Namespace}BookingAppointmentsFAQ"
+      description: "Allows the user to ask questions about what documentation to have when booking appointments"
+      fulfillmentActivity:
+        type: CodeHook
+        codeHook:
+          messageVersion: '1.0'
+          uri:
+            Fn::GetAtt:
+              - UserQuestionFAQAnswerer
+              - Arn
+      sampleUtterances:
+        - what info do they require
+        - what info do they require so I can book an appointment
+        - what info do they require so I can sign up for an appointment
+        - what info do they require when I book an appointment
+        - what information do you need
+        - what information do you need so I can book an appointment
+        - what information do you need so I can sign up for an appointment
+        - what information do you need when I book an appointment
+        - what's the info you need
+        - what's the info you need so I can book an appointment
+        - what's the info you need so I can sign up for an appointment
+        - what's the info you need when I book an appointment
+
+
+
   VaccineBot:
     Type: 'Custom::LexBot'
     DependsOn:
@@ -487,6 +530,9 @@ Resources:
           intentVersion: $LATEST
         - intentName:
             Ref: DocumentationAppointmentsFAQ
+          intentVersion: $LATEST
+        - intentName:
+            Ref: BookingAppointmentsFAQ
           intentVersion: $LATEST
       locale: en-US
       processBehavior: BUILD

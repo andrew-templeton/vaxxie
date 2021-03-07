@@ -141,9 +141,11 @@ const preferences = async ({ Records }) => {
       requestedAt,
       latitude:lat,
       longitude:lon,
-      radius
+      radius,
+      zipcode
     }) => ({
       requestedAt,
+      zipcode,
       geoSearch: {
         geo_distance: {
           distance: `${radius}mi`,

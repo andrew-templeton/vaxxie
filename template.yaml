@@ -88,12 +88,23 @@ Resources:
       sampleUtterances:
         - Find me a vaccine
         - Where can I get a vaccine within {Distance}
-        - Find appointments within {Distance} of {Zipcode}
+        - Find appointments within {Distance} miles of {Zipcode}
         - I want a vaccine
         - Please help me find an appointment
         - Please help me find a vaccine
         - I want an appointment
         - Find a vaccine in {Zipcode}
+        - I need to find a two dose vaccine within {Distance} miles of zip code {Zipcode}
+        - I need to find a vaccine within {Distance} miles of zip code {Zipcode}
+        - find another vaccine
+        - add another search
+        - look in another place
+        - search in a new area
+        - find a vaccine in a new area
+        - find me a new vaccine
+        - i want to set another search up
+        - I want to look somewhere else
+        - look somewhere else
       slots:
         - name: Distance
           description: The distance in miles to allow notifications
@@ -136,6 +147,254 @@ Resources:
                 contentType: PlainText
               - content: What is your zip code?
                 contentType: PlainText
+
+  SearchEditLexPermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      Action: lambda:InvokeFunction
+      FunctionName:
+        Ref: UserPreferenceUpdater
+      Principal: lex.amazonaws.com
+      SourceArn:
+        Fn::Sub: "arn:aws:lex:${AWS::Region}:${AWS::AccountId}:intent:${Namespace}UpdateVaccineSearch:*"
+  UpdateVaccineSearch:
+    DependsOn:
+      - SearchEditLexPermission
+    Type: 'Custom::LexIntent'
+    Properties:
+      ServiceToken:
+        'Fn::ImportValue': cfn-lex-intent-1-0-4-ServiceToken
+      name:
+        Fn::Sub: "${Namespace}UpdateVaccineSearch"
+      confirmationPrompt:
+        maxAttempts: 1
+        messages:
+          - content: Should I replace search number {Searchnumber} for appointments near {Zipcode}, within {Distance} miles?
+            contentType: PlainText
+      description: Allow the user to update an existing search
+      fulfillmentActivity:
+        type: CodeHook
+        codeHook:
+          messageVersion: '1.0'
+          uri:
+            Fn::GetAtt:
+              - UserPreferenceUpdater
+              - Arn
+      rejectionStatement:
+        messages:
+          - content: 'Okay, I won''t update your search.'
+            contentType: PlainText
+          - content: I canceled your change to your search.
+            contentType: PlainText
+      sampleUtterances:
+        - Change my search
+        - update my search
+        - look in a different place
+        - change my search to be {Distance} miles from {Zipcode}
+        - change my search to be {Distance} mi from {Zipcode}
+        - update my search to be {Distance} miles from {Zipcode}
+        - alter my search to be {Distance} miles from {Zipcode}
+        - update my search to be {Distance} mi from {Zipcode}
+        - alter my search to be {Distance} mi from {Zipcode}
+        - Change my search to be {Distance} mi
+        - Update my search to be {Distance} mi
+        - Alter my search to be {Distance} mi
+        - Change my search to be in {Zipcode}
+        - alter my search to be in {Zipcode}
+        - update my search to be in {Zipcode}
+        - Change my search to be near {Zipcode}
+        - alter my search to be near {Zipcode}
+        - update my search to be near {Zipcode}
+        - change search {Searchnumber} to be {Distance} miles from {Zipcode}
+        - change search {Searchnumber} to be {Distance} mi from {Zipcode}
+        - update search {Searchnumber} to be {Distance} miles from {Zipcode}
+        - alter search {Searchnumber} to be {Distance} miles from {Zipcode}
+        - update search {Searchnumber} to be {Distance} mi from {Zipcode}
+        - alter search {Searchnumber} to be {Distance} mi from {Zipcode}
+
+      slots:
+        - name: Searchnumber
+          description: The one-indexed index of the search to edit
+          priority: 1
+          sampleUtterances:
+            - Replace number {Searchnumber} please
+            - Replace {Searchnumber}
+            - "{Searchnumber} please"
+            - the {Searchnumber}
+            - the {Searchnumber} please
+          slotConstraint: Required
+          slotType: AMAZON.NUMBER
+          valueElicitationPrompt:
+            maxAttempts: 1
+            messages:
+              - content: 'Which search do you want to replace? When you list the searches, they have a label like 1 or 2 next to them. You should tell me which number this is. If you need to see the numbers again, re-ask me to list your current searches. If you only ever asked me to look in one place, just say 1. Thanks!'
+                contentType: PlainText
+        - name: Distance
+          description: The distance in miles to allow notifications
+          priority: 2
+          sampleUtterances:
+            - No more than {Distance}
+            - No more than {Distance} miles
+            - I could go up to {Distance} miles
+            - I could go up to {Distance}
+            - I can drive {Distance} miles
+            - Within {Distance}
+            - Within {Distance} please
+          slotConstraint: Required
+          slotType: AMAZON.NUMBER
+          valueElicitationPrompt:
+            maxAttempts: 1
+            messages:
+              - content: How far away is okay to get a vaccine, in miles, for the updated search?
+                contentType: PlainText
+              - content: How far are you willing to travel, in miles, to an appointment, for this updated search?
+                contentType: PlainText
+              - content: The larger the area you're willing to go, the better. How many miles should I search for this updated search?
+                contentType: PlainText
+        - name: Zipcode
+          description: The zip code of the search origin
+          priority: 3
+          sampleUtterances:
+            - Zip code {Zipcode}
+            - My zip code is {Zipcode}
+            - I live in {Zipcode}
+            - Start search in {Zipcode}
+            - Look in {Zipcode}
+            - Near {Zipcode}
+          slotConstraint: Required
+          slotType: AMAZON.NUMBER
+          valueElicitationPrompt:
+            maxAttempts: 1
+            messages:
+              - content: What is the zip code you would like me to start your updated search from?
+                contentType: PlainText
+              - content: What is your zip code to use for the updated search?
+                contentType: PlainText
+
+
+  SearchRemoveLexPermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      Action: lambda:InvokeFunction
+      FunctionName:
+        Ref: UserPreferenceRemover
+      Principal: lex.amazonaws.com
+      SourceArn:
+        Fn::Sub: "arn:aws:lex:${AWS::Region}:${AWS::AccountId}:intent:${Namespace}RemoveVaccineSearch:*"
+  RemoveVaccineSearch:
+    DependsOn:
+      - SearchRemoveLexPermission
+    Type: 'Custom::LexIntent'
+    Properties:
+      ServiceToken:
+        'Fn::ImportValue': cfn-lex-intent-1-0-4-ServiceToken
+      name:
+        Fn::Sub: "${Namespace}RemoveVaccineSearch"
+      confirmationPrompt:
+        maxAttempts: 1
+        messages:
+          - content: Should I remove search number {Searchnumber}?
+            contentType: PlainText
+      description: Allow the user to remove an existing search
+      fulfillmentActivity:
+        type: CodeHook
+        codeHook:
+          messageVersion: '1.0'
+          uri:
+            Fn::GetAtt:
+              - UserPreferenceRemover
+              - Arn
+      rejectionStatement:
+        messages:
+          - content: 'Okay, I won''t update your search.'
+            contentType: PlainText
+          - content: I canceled your change to your search.
+            contentType: PlainText
+      sampleUtterances:
+        - remove search {Searchnumber}
+        - remove my search {Searchnumber}
+        - delete search {Searchnumber}
+        - delete my search {Searchnumber}
+        - remove my search
+        - stop looking
+        - stop looking for me
+        - stop my search
+        - stop searching
+        - delete my search
+        - remove one of these searches
+        - delete one of these searches
+        - I want to remove one of my searches
+        - I want to delete one of my searches
+        - please remove a search
+        - stop searching in one of these places
+      slots:
+        - name: Searchnumber
+          description: The one-indexed index of the search to edit
+          priority: 1
+          sampleUtterances:
+            - remove number {Searchnumber} please
+            - remove {Searchnumber}
+            - "{Searchnumber} please"
+            - the {Searchnumber}
+            - the {Searchnumber} please
+          slotConstraint: Required
+          slotType: AMAZON.NUMBER
+          valueElicitationPrompt:
+            maxAttempts: 1
+            messages:
+              - content: 'Which search do you want to remove? When you list the searches, they have a label like 1 or 2 next to them. You should tell me which number this is. If you need to see the numbers again, re-ask me to list your current searches. If you only ever asked me to look in one place, just say 1. Thanks!'
+                contentType: PlainText
+
+  SearchListLambdaLexPermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      Action: lambda:InvokeFunction
+      FunctionName:
+        Ref: UserPreferenceLister
+      Principal: lex.amazonaws.com
+      SourceArn:
+        Fn::Sub: "arn:aws:lex:${AWS::Region}:${AWS::AccountId}:intent:${Namespace}ListVaccineSearches:*"
+  ListVaccineSearches:
+    DependsOn:
+      - SearchListLambdaLexPermission
+    Type: 'Custom::LexIntent'
+    Properties:
+      ServiceToken:
+        'Fn::ImportValue': cfn-lex-intent-1-0-4-ServiceToken
+      name:
+        Fn::Sub: "${Namespace}ListVaccineSearches"
+      description: "User indicates intent to inspect the existing searches"
+      fulfillmentActivity:
+        type: CodeHook
+        codeHook:
+          messageVersion: '1.0'
+          uri:
+            Fn::GetAtt:
+              - UserPreferenceLister
+              - Arn
+      sampleUtterances:
+        - what are my current searches
+        - where are you looking right now
+        - what are you trying to find
+        - what have I searched for before
+        - where are you searching right now
+        - what are you looking for right now
+        - what was my last search
+        - what are you finding right now
+        - list my searches
+        - show my searches
+        - list searches
+        - show what you're looking for
+        - show all my searches
+        - show all things you're searching for
+        - where are you looking
+        - show me what you're looking for
+        - show me all your searches
+        - show me all the places you're searching for me
+        - where are you looking for vaccines for me
+        - what are my searches
+        - list all the places you're looking
+        - show searches
 
   CancelAppointmentsFAQLambdaPermission:
     Type: AWS::Lambda::Permission
@@ -589,6 +848,15 @@ Resources:
         - intentName:
             Ref: NoFoundAppointmentsFAQ
           intentVersion: $LATEST
+        - intentName:
+            Ref: ListVaccineSearches
+          intentVersion: $LATEST
+        - intentName:
+            Ref: UpdateVaccineSearch
+          intentVersion: $LATEST
+        - intentName:
+            Ref: RemoveVaccineSearch
+          intentVersion: $LATEST
       locale: en-US
       processBehavior: BUILD
   UserPreferencePersister:
@@ -596,7 +864,55 @@ Resources:
     Properties:
       CodeUri: .
       Runtime: nodejs12.x
-      Handler: fulfillment.preferences
+      Handler: fulfillment.addSearch
+      MemorySize: 3008
+      Timeout: 30
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName:
+              Ref: PreferenceTable
+      Environment:
+        Variables:
+          PREFERENCES_TABLE:
+            Ref: PreferenceTable
+  UserPreferenceUpdater:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: .
+      Runtime: nodejs12.x
+      Handler: fulfillment.updateSearch
+      MemorySize: 3008
+      Timeout: 30
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName:
+              Ref: PreferenceTable
+      Environment:
+        Variables:
+          PREFERENCES_TABLE:
+            Ref: PreferenceTable
+  UserPreferenceRemover:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: .
+      Runtime: nodejs12.x
+      Handler: fulfillment.removeSearch
+      MemorySize: 3008
+      Timeout: 30
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName:
+              Ref: PreferenceTable
+      Environment:
+        Variables:
+          PREFERENCES_TABLE:
+            Ref: PreferenceTable
+  UserPreferenceLister:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: .
+      Runtime: nodejs12.x
+      Handler: fulfillment.listSearches
       MemorySize: 3008
       Timeout: 30
       Policies:

@@ -13,6 +13,9 @@
           "requestedAt": {
             "type": "date"
           },
+          "zipcode": {
+            "type": "keyword"
+          },
           "geoSearch": {
             "type": "percolator"
           }

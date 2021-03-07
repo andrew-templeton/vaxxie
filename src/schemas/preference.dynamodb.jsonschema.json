@@ -18,7 +18,8 @@
           "requestedAt",
           "latitude",
           "longitude",
-          "radius"
+          "radius",
+          "zipcode"
         ],
         "additionalProperties": false,
         "properties": {
@@ -34,6 +35,10 @@
           "radius": {
             "type": "number",
             "maximum": 200
+          },
+          "zipcode": {
+            "type": "string",
+            "pattern": "^\\d{5}$"
           }
         }
       }

@@ -21,11 +21,16 @@
         "additionalProperties": false,
         "required": [
           "requestedAt",
-          "geoSearch"
+          "geoSearch",
+          "zipcode"
         ],
         "properties": {
           "requestedAt": {
             "type": "number"
+          },
+          "zipcode": {
+            "type": "string",
+            "pattern": "^\\d{5}$"
           },
           "geoSearch": {
             "type": "object",

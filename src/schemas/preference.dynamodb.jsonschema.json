@@ -32,7 +32,8 @@
             "type": "number"
           },
           "radius": {
-            "type": "number"
+            "type": "number",
+            "maximum": 200
           }
         }
       }

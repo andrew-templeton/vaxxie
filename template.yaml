@@ -369,6 +369,29 @@ Resources:
         SubnetIds:
           - Ref: PrivateSubnetAlpha
           - Ref: PrivateSubnetBravo
+
+  VaccineSpotter:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: .
+      Runtime: nodejs12.x
+      Handler: crawlers.vaccinespotter
+      MemorySize: 3008
+      Timeout: 300
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName:
+              Ref: SlotsTable
+      Environment:
+        Variables:
+          SLOTS_TABLE:
+            Ref: SlotsTable
+      Events:
+        VaccineSpotter:
+          Type: Schedule
+          Properties:
+            Enabled: true
+            Schedule: rate(1 minute)
   HebCrawler:
     Type: AWS::Serverless::Function
     Properties:
@@ -389,8 +412,8 @@ Resources:
         HebCollector:
           Type: Schedule
           Properties:
-            Enabled: true
-            Schedule: rate(5 minutes)
+            Enabled: false
+            Schedule: rate(1 minute)
   SlotsTable:
     Type: AWS::DynamoDB::Table
     Properties:

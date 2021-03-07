@@ -96,12 +96,13 @@ const slots = async ({ Records }) => {
       },
       url,
       provider,
-      slots
+      slots,
+      location
     }) => ({
       type: 'section',
       text: {
         type: 'mrkdwn',
-        text: `Found ${slots || 'an unknown number of '} slots from ${provider} at <${loc({ lat, lon })}|this location>. Click <${url}|THIS LINK> to book!`
+        text: `Found ${slots || 'an unknown number of '} slots from ${provider} at <${loc({ lat, lon })}|this location (${location || 'unknown store name'})>. Click <${url}|THIS LINK> to book!`
       }
     }))
   }))

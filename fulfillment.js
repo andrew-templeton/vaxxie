@@ -55,6 +55,11 @@ const faqs = async ({ currentIntent: { name, slots={} } }) => {
       return response('Call the pharmacy up to inform them.  Their contact number should be in the email confirmation.  Some sites are more flexible than others, try not to miss your scheduled time!')
     case `${NAMESPACE}LeftoverAppointmentsFAQ`:
       return response('Some providers are keeping waiting lists, but the general feedback is people are showing up for their appointments and there are hardly any leftover vaccines.  It is best if you get a confirmed appointment.')
+    case `${NAMESPACE}SecondAppointmentsFAQ`:
+      return response(`Second doses are generally guaranteed from the provider that administered the first dose.  Please contact them if you are due for a second dose and have not received any booking information.
+
+Walgreens and CVS have options for booking second doses as part of their scheduler.
+Bell County Second Dose: https://outlook.office365.com/owa/calendar/BeltonBellCountyTexas@bellcountytx.onmicrosoft.com/bookings/`)
   }
   return response('Looks like a developer made a mistake programming me, and I don\'t know what to reply with!')
 }

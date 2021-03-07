@@ -335,6 +335,66 @@ Resources:
         - any shots left
         - any more shots left over
 
+
+  SecondAppointmentsFAQLambdaPermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      Action: lambda:InvokeFunction
+      FunctionName:
+        Ref: UserQuestionFAQAnswerer
+      Principal: lex.amazonaws.com
+      SourceArn:
+        Fn::Sub: "arn:aws:lex:${AWS::Region}:${AWS::AccountId}:intent:${Namespace}SecondAppointmentsFAQ:*"
+  SecondAppointmentsFAQ:
+    DependsOn:
+      - SecondAppointmentsFAQLambdaPermission
+    Type: 'Custom::LexIntent'
+    Properties:
+      ServiceToken:
+        'Fn::ImportValue': cfn-lex-intent-1-0-4-ServiceToken
+      name:
+        Fn::Sub: "${Namespace}SecondAppointmentsFAQ"
+      description: "Allows the user to ask questions about how to get second appointments"
+      fulfillmentActivity:
+        type: CodeHook
+        codeHook:
+          messageVersion: '1.0'
+          uri:
+            Fn::GetAtt:
+              - UserQuestionFAQAnswerer
+              - Arn
+      sampleUtterances:
+        - Are second appointments scheduled during first dose appt
+        - Are second doses scheduled during first dose appt
+        - Are second shots scheduled during first dose appt
+        - Are second vaccines scheduled during first dose appt
+        - find a second appointment
+        - find a second dose
+        - find a second shot
+        - find a second vaccine
+        - how do you book a second appointment
+        - how do you book a second dose
+        - how do you book a second shot
+        - how do you book a second vaccine
+        - schedule a second appointment
+        - schedule a second dose
+        - schedule a second shot
+        - schedule a second vaccine
+        - schedule second appointment
+        - schedule second dose
+        - schedule second shot
+        - schedule second vaccine
+        - when are second appointments scheduled
+        - when are second doses scheduled
+        - when are second shots scheduled
+        - when are second vaccines scheduled
+        - where can I find a second appointment
+        - where can I find a second dose
+        - where can I find a second shot
+        - where can I find a second vaccine
+
+
+
   VaccineBot:
     Type: 'Custom::LexBot'
     DependsOn:
@@ -377,6 +437,9 @@ Resources:
           intentVersion: $LATEST
         - intentName:
             Ref: LeftoverAppointmentsFAQ
+          intentVersion: $LATEST
+        - intentName:
+            Ref: SecondAppointmentsFAQ
           intentVersion: $LATEST
       locale: en-US
       processBehavior: BUILD

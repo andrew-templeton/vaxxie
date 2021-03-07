@@ -148,7 +148,7 @@ Resources:
         Fn::Sub: "arn:aws:lex:${AWS::Region}:${AWS::AccountId}:intent:${Namespace}CancelAppointmentsFAQ:*"
   CancelAppointmentsFAQ:
     DependsOn:
-      - VaccineLambdaLexPermission
+      - CancelAppointmentsFAQLambdaPermission
     Type: 'Custom::LexIntent'
     Properties:
       ServiceToken:
@@ -181,6 +181,39 @@ Resources:
         - trying to cancel
         - How did you cancel it
 
+  RescheduleAppointmentsFAQLambdaPermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      Action: lambda:InvokeFunction
+      FunctionName:
+        Ref: UserQuestionFAQAnswerer
+      Principal: lex.amazonaws.com
+      SourceArn:
+        Fn::Sub: "arn:aws:lex:${AWS::Region}:${AWS::AccountId}:intent:${Namespace}RescheduleAppointmentsFAQ:*"
+  RescheduleAppointmentsFAQ:
+    DependsOn:
+      - RescheduleAppointmentsFAQLambdaPermission
+    Type: 'Custom::LexIntent'
+    Properties:
+      ServiceToken:
+        'Fn::ImportValue': cfn-lex-intent-1-0-4-ServiceToken
+      name:
+        Fn::Sub: "${Namespace}RescheduleAppointmentsFAQ"
+      description: "Allows the user to ask questions about how to reschedule appointments"
+      fulfillmentActivity:
+        type: CodeHook
+        codeHook:
+          messageVersion: '1.0'
+          uri:
+            Fn::GetAtt:
+              - UserQuestionFAQAnswerer
+              - Arn
+      sampleUtterances:
+        - Can you reschedule appointments
+        - How do I reschedule
+        - How do you reschedule
+        - How can I reschedule
+
   VaccineBot:
     Type: 'Custom::LexBot'
     DependsOn:
@@ -211,6 +244,9 @@ Resources:
           intentVersion: $LATEST
         - intentName:
             Ref: CancelAppointmentsFAQ
+          intentVersion: $LATEST
+        - intentName:
+            Ref: RescheduleAppointmentsFAQ
           intentVersion: $LATEST
       locale: en-US
       processBehavior: BUILD

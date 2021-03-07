@@ -2,8 +2,8 @@
 
 const { PutToPreferencesTable } = require('./src/putToTable')
 const Zips = require('./src/data/zips.json')
-
-
+const MAX_RADIUS = require('./src/schemas/preference.dynamodb.jsonschema.json').properties.queries.items.properties.radius.maximum
+const { NAMESPACE } = process.env
 const response = content => ({
   dialogAction: {
     type: 'Close',
@@ -25,6 +25,9 @@ const preferences = async event => {
   }
   const { lat:latitude, lon:longitude } = Zips[Zipcode]
   const now = Math.floor(Date.now() / 1000)
+  if (radius > MAX_RADIUS) {
+    return response('Sorry, but I can only search up to 200 miles at a time. Could you try something a little smaller?')
+  }
   const [putError] = await PutToPreferencesTable({ userId: slackUserId, queries: [ { requestedAt: now, latitude, longitude, radius } ], createdAt: now })
   console.log(putError)
   return response(putError
@@ -33,7 +36,23 @@ const preferences = async event => {
   )
 }
 
+const faqs = async ({ currentIntent: { name, slots={} } }) => {
+  console.log({
+    name,
+    slots
+  })
+  switch (name) {
+    case `${NAMESPACE}CancelAppointmentsFAQ`:
+      return response(`Usually the email confirmation will contain a link allowing you to reschedule an appointment.
+ HEB/Walgreens/CVS: See email confirmation to cancel
+ Walmart: Call the pharmacy
+ Bell County: Email Vaccine-cancel-bell@outlook.com`)
+  }
+  return response('Looks like a developer made a mistake programming me, and I don\'t know what to reply with!')
+}
+
 
 module.exports = {
-  preferences
+  preferences,
+  faqs
 }

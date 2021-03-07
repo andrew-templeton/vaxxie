@@ -136,6 +136,51 @@ Resources:
                 contentType: PlainText
               - content: What is your zip code?
                 contentType: PlainText
+
+  CancelAppointmentsFAQLambdaPermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      Action: lambda:InvokeFunction
+      FunctionName:
+        Ref: UserQuestionFAQAnswerer
+      Principal: lex.amazonaws.com
+      SourceArn:
+        Fn::Sub: "arn:aws:lex:${AWS::Region}:${AWS::AccountId}:intent:${Namespace}CancelAppointmentsFAQ:*"
+  CancelAppointmentsFAQ:
+    DependsOn:
+      - VaccineLambdaLexPermission
+    Type: 'Custom::LexIntent'
+    Properties:
+      ServiceToken:
+        'Fn::ImportValue': cfn-lex-intent-1-0-4-ServiceToken
+      name:
+        Fn::Sub: "${Namespace}CancelAppointmentsFAQ"
+      description: "Allows the user to ask questions about how to cancel appointments"
+      fulfillmentActivity:
+        type: CodeHook
+        codeHook:
+          messageVersion: '1.0'
+          uri:
+            Fn::GetAtt:
+              - UserQuestionFAQAnswerer
+              - Arn
+      sampleUtterances:
+        - How can I cancel
+        - I can't make the appointment
+        - I can't make the appt
+        - how do I cancel
+        - how did you cancel
+        - one of my neighbors can't make it
+        - How do we cancel an appointment
+        - I'm trying to cancel
+        - I need to cancel my appt
+        - link to cancel
+        - Is there a number to cancel
+        - Is there a email to cancel
+        - Does anyone know how to cancel
+        - trying to cancel
+        - How did you cancel it
+
   VaccineBot:
     Type: 'Custom::LexBot'
     DependsOn:
@@ -155,9 +200,7 @@ Resources:
       clarificationPrompt:
         maxAttempts: 1
         messages:
-          - content: 'I''m sorry, I didn''t hear that. Can you repeate what you just said?'
-            contentType: PlainText
-          - content: Can you say that again?
+          - content: 'I''m sorry, I didn''t hear that. Can you repeat what you just said, in another way? The main way to use me is to ask: Find me a vaccine'
             contentType: PlainText
       description:
         Ref: BotDescription
@@ -165,6 +208,9 @@ Resources:
       intents:
         - intentName:
             Ref: SearchForVaccine
+          intentVersion: $LATEST
+        - intentName:
+            Ref: CancelAppointmentsFAQ
           intentVersion: $LATEST
       locale: en-US
       processBehavior: BUILD
@@ -184,6 +230,18 @@ Resources:
         Variables:
           PREFERENCES_TABLE:
             Ref: PreferenceTable
+  UserQuestionFAQAnswerer:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: .
+      Runtime: nodejs12.x
+      Handler: fulfillment.faqs
+      MemorySize: 3008
+      Timeout: 30
+      Environment:
+        Variables:
+          NAMESPACE:
+            Ref: Namespace
   ExternalCrawlerEnpoint:
     Type: AWS::Serverless::Function
     Properties:

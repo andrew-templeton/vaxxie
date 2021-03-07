@@ -53,6 +53,8 @@ const faqs = async ({ currentIntent: { name, slots={} } }) => {
       return response('Most providers will not allow you to transfer appointments to another person. There have been limited exceptions to this, mainly with pharmacies.  Contact the pharmacy to see if it is something they would do.')
     case `${NAMESPACE}LateApptAppointmentsFAQ`:
       return response('Call the pharmacy up to inform them.  Their contact number should be in the email confirmation.  Some sites are more flexible than others, try not to miss your scheduled time!')
+    case `${NAMESPACE}LeftoverAppointmentsFAQ`:
+      return response('Some providers are keeping waiting lists, but the general feedback is people are showing up for their appointments and there are hardly any leftover vaccines.  It is best if you get a confirmed appointment.')
   }
   return response('Looks like a developer made a mistake programming me, and I don\'t know what to reply with!')
 }

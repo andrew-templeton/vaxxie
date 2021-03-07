@@ -286,6 +286,55 @@ Resources:
         - Do they care if you're late
 
 
+  LeftoverAppointmentsFAQLambdaPermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      Action: lambda:InvokeFunction
+      FunctionName:
+        Ref: UserQuestionFAQAnswerer
+      Principal: lex.amazonaws.com
+      SourceArn:
+        Fn::Sub: "arn:aws:lex:${AWS::Region}:${AWS::AccountId}:intent:${Namespace}LeftoverAppointmentsFAQ:*"
+  LeftoverAppointmentsFAQ:
+    DependsOn:
+      - LeftoverAppointmentsFAQLambdaPermission
+    Type: 'Custom::LexIntent'
+    Properties:
+      ServiceToken:
+        'Fn::ImportValue': cfn-lex-intent-1-0-4-ServiceToken
+      name:
+        Fn::Sub: "${Namespace}LeftoverAppointmentsFAQ"
+      description: "Allows the user to ask questions about how to transfer appointments"
+      fulfillmentActivity:
+        type: CodeHook
+        codeHook:
+          messageVersion: '1.0'
+          uri:
+            Fn::GetAtt:
+              - UserQuestionFAQAnswerer
+              - Arn
+      sampleUtterances:
+        - Are there leftover vaccines
+        - What if there are leftover vaccines
+        - Are there any extra vaccines
+        - What if there are more vaccines leftover
+        - what happens when there are no shows
+        - any vaccines left
+        - any more vaccines left over
+        - are there any left over
+        - Are there leftover doses
+        - What if there are leftover doses
+        - Are there any extra doses
+        - What if there are more doses leftover
+        - any doses left
+        - any more doses left over
+        - Are there leftover shots
+        - What if there are leftover shots
+        - Are there any extra shots
+        - What if there are more shots leftover
+        - any shots left
+        - any more shots left over
+
   VaccineBot:
     Type: 'Custom::LexBot'
     DependsOn:
@@ -325,6 +374,9 @@ Resources:
           intentVersion: $LATEST
         - intentName:
             Ref: LateApptAppointmentsFAQ
+          intentVersion: $LATEST
+        - intentName:
+            Ref: LeftoverAppointmentsFAQ
           intentVersion: $LATEST
       locale: en-US
       processBehavior: BUILD

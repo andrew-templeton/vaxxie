@@ -47,8 +47,10 @@ const faqs = async ({ currentIntent: { name, slots={} } }) => {
  HEB/Walgreens/CVS: See email confirmation to cancel
  Walmart: Call the pharmacy
  Bell County: Email Vaccine-cancel-bell@outlook.com`)
-   case `${NAMESPACE}RescheduleAppointmentsFAQ`:
-    return response('Most providers will not allow you to reschedule your appointment.  You can try calling the provider and seeing if they would be open to it but many times you will need to cancel and make a new appointment.')
+    case `${NAMESPACE}RescheduleAppointmentsFAQ`:
+      return response('Most providers will not allow you to reschedule your appointment.  You can try calling the provider and seeing if they would be open to it but many times you will need to cancel and make a new appointment.')
+    case `${NAMESPACE}TransferAppointmentsFAQ`:
+      return response('Most providers will not allow you to transfer appointments to another person. There have been limited exceptions to this, mainly with pharmacies.  Contact the pharmacy to see if it is something they would do.')
   }
   return response('Looks like a developer made a mistake programming me, and I don\'t know what to reply with!')
 }

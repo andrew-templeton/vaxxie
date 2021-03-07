@@ -60,6 +60,8 @@ const faqs = async ({ currentIntent: { name, slots={} } }) => {
 
 Walgreens and CVS have options for booking second doses as part of their scheduler.
 Bell County Second Dose: https://outlook.office365.com/owa/calendar/BeltonBellCountyTexas@bellcountytx.onmicrosoft.com/bookings/`)
+    case `${NAMESPACE}DocumentationAppointmentsFAQ`:
+      return response('You will need to bring a photo ID and insurance information.  To save time, print, fill and bring in the consent form that is usually included as a link in your confirmation email.  Be sure to wear a mask to your appointment!')
   }
   return response('Looks like a developer made a mistake programming me, and I don\'t know what to reply with!')
 }

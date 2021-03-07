@@ -393,6 +393,50 @@ Resources:
         - where can I find a second shot
         - where can I find a second vaccine
 
+  DocumentationAppointmentsFAQLambdaPermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      Action: lambda:InvokeFunction
+      FunctionName:
+        Ref: UserQuestionFAQAnswerer
+      Principal: lex.amazonaws.com
+      SourceArn:
+        Fn::Sub: "arn:aws:lex:${AWS::Region}:${AWS::AccountId}:intent:${Namespace}DocumentationAppointmentsFAQ:*"
+  DocumentationAppointmentsFAQ:
+    DependsOn:
+      - DocumentationAppointmentsFAQLambdaPermission
+    Type: 'Custom::LexIntent'
+    Properties:
+      ServiceToken:
+        'Fn::ImportValue': cfn-lex-intent-1-0-4-ServiceToken
+      name:
+        Fn::Sub: "${Namespace}DocumentationAppointmentsFAQ"
+      description: "Allows the user to ask questions about what documentation to bring to appointments"
+      fulfillmentActivity:
+        type: CodeHook
+        codeHook:
+          messageVersion: '1.0'
+          uri:
+            Fn::GetAtt:
+              - UserQuestionFAQAnswerer
+              - Arn
+      sampleUtterances:
+        - I didn't receive an email
+        - I don't have the confirmation page
+        - are there any forms to fill out
+        - did not receive a email
+        - do you need your ID
+        - do you need your identification
+        - how to I prove I am eligible
+        - is there any paperwork I need to take
+        - is there paperwork required
+        - what documentation do they ask for
+        - what documents should I bring
+        - what proof do they ask for
+        - what proof of my status to they ask for
+        - what proof should I bring
+        - what should I bring
+        - what do I need to bring
 
 
   VaccineBot:
@@ -440,6 +484,9 @@ Resources:
           intentVersion: $LATEST
         - intentName:
             Ref: SecondAppointmentsFAQ
+          intentVersion: $LATEST
+        - intentName:
+            Ref: DocumentationAppointmentsFAQ
           intentVersion: $LATEST
       locale: en-US
       processBehavior: BUILD

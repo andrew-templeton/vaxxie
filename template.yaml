@@ -247,6 +247,44 @@ Resources:
         - Can you transfer appts to someone
         - Can you transfer appointments to someone
 
+  LateApptAppointmentsFAQLambdaPermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      Action: lambda:InvokeFunction
+      FunctionName:
+        Ref: UserQuestionFAQAnswerer
+      Principal: lex.amazonaws.com
+      SourceArn:
+        Fn::Sub: "arn:aws:lex:${AWS::Region}:${AWS::AccountId}:intent:${Namespace}LateApptAppointmentsFAQ:*"
+  LateApptAppointmentsFAQ:
+    DependsOn:
+      - LateApptAppointmentsFAQLambdaPermission
+    Type: 'Custom::LexIntent'
+    Properties:
+      ServiceToken:
+        'Fn::ImportValue': cfn-lex-intent-1-0-4-ServiceToken
+      name:
+        Fn::Sub: "${Namespace}LateApptAppointmentsFAQ"
+      description: "Allows the user to ask questions about how to transfer appointments"
+      fulfillmentActivity:
+        type: CodeHook
+        codeHook:
+          messageVersion: '1.0'
+          uri:
+            Fn::GetAtt:
+              - UserQuestionFAQAnswerer
+              - Arn
+      sampleUtterances:
+        - do you have to be there at the appointment time
+        - what if you're late
+        - What if I'm running late
+        - I'm running late
+        - I'm going to be late
+        - What if I miss my appointment
+        - I am late
+        - I think I am going to miss my appointment
+        - Do they care if you're late
+
 
   VaccineBot:
     Type: 'Custom::LexBot'
@@ -284,6 +322,9 @@ Resources:
           intentVersion: $LATEST
         - intentName:
             Ref: TransferAppointmentsFAQ
+          intentVersion: $LATEST
+        - intentName:
+            Ref: LateApptAppointmentsFAQ
           intentVersion: $LATEST
       locale: en-US
       processBehavior: BUILD

@@ -51,6 +51,8 @@ const faqs = async ({ currentIntent: { name, slots={} } }) => {
       return response('Most providers will not allow you to reschedule your appointment.  You can try calling the provider and seeing if they would be open to it but many times you will need to cancel and make a new appointment.')
     case `${NAMESPACE}TransferAppointmentsFAQ`:
       return response('Most providers will not allow you to transfer appointments to another person. There have been limited exceptions to this, mainly with pharmacies.  Contact the pharmacy to see if it is something they would do.')
+    case `${NAMESPACE}LateApptAppointmentsFAQ`:
+      return response('Call the pharmacy up to inform them.  Their contact number should be in the email confirmation.  Some sites are more flexible than others, try not to miss your scheduled time!')
   }
   return response('Looks like a developer made a mistake programming me, and I don\'t know what to reply with!')
 }

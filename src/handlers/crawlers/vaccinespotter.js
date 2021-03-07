@@ -38,7 +38,24 @@ const urlForBrand = ({
   state,
   time_zone,
   appointments
-}) => `https://${brand}.com` // This is a pain
+}) => {
+  const brandMap = {
+    walmart: 'https://www.walmart.com/pharmacy/clinical-services/immunization/scheduled?imzType=covid',
+    walgreens: 'https://www.walgreens.com/findcare/vaccination/covid-19/location-screening',
+    cvs: 'https://www.cvs.com/vaccine/intake/store/covid-screener/covid-qns',
+    albertsons: 'https://www.mhealthappointments.com/covidappt',
+    sams_club: 'https://www.samsclub.com/pharmacy/immunization?imzType=covid',
+    pharmaca: 'https://www.pharmacarx.com/pharmacy-locator',
+    kroger: 'https://www.kroger.com/rx/covid-eligibility',
+    hyvee: 'https://www.hy-vee.com/my-pharmacy/covid-vaccine-consent',
+    thrify_white: 'https://www.thriftywhite.com/covid19vaccine'
+  }
+  return brandMap[brand] || `https://${brand}.com` // This is a pain
+  // taylor dunne 'https://www.walgreens.com/findcare/vaccination/covid-19/location-screening',
+  // Alamodome 'https://patportal.cdpehs.com/ezEMRxPHR/html/login/newPortalReg.jsp'
+  // Bell county killeen 'https://outlook.office365.com/owa/calendar/BellCountyTechnologyServices1@bellcountytx.onmicrosoft.com/bookings/'
+  // bell county belton 'https://outlook.office365.com/owa/calendar/BellCountyTechnologyServices3@bellcountytx.onmicrosoft.com/bookings/'
+}
 
 const vaccinespotter = async () => {
   const htmlString = (await Axios.get(`${API_ORIGIN}/api`)).data

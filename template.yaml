@@ -553,7 +553,7 @@ Resources:
       clarificationPrompt:
         maxAttempts: 1
         messages:
-          - content: 'I''m sorry, I didn''t hear that. Can you repeat what you just said, in another way? The main way to use me is to ask: Find me a vaccine'
+          - content: 'Join the #help-needed channel and ask.  There are lot of people willing to pitch in to help. That said, the main way to use me is to ask: Find me a vaccine'
             contentType: PlainText
       description:
         Ref: BotDescription

@@ -480,6 +480,58 @@ Resources:
         - what's the info you need so I can sign up for an appointment
         - what's the info you need when I book an appointment
 
+  NoFoundAppointmentsFAQLambdaPermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      Action: lambda:InvokeFunction
+      FunctionName:
+        Ref: UserQuestionFAQAnswerer
+      Principal: lex.amazonaws.com
+      SourceArn:
+        Fn::Sub: "arn:aws:lex:${AWS::Region}:${AWS::AccountId}:intent:${Namespace}NoFoundAppointmentsFAQ:*"
+  NoFoundAppointmentsFAQ:
+    DependsOn:
+      - NoFoundAppointmentsFAQLambdaPermission
+    Type: 'Custom::LexIntent'
+    Properties:
+      ServiceToken:
+        'Fn::ImportValue': cfn-lex-intent-1-0-4-ServiceToken
+      name:
+        Fn::Sub: "${Namespace}NoFoundAppointmentsFAQ"
+      description: "Allows the user to ask questions about where the heck are the appointments"
+      fulfillmentActivity:
+        type: CodeHook
+        codeHook:
+          messageVersion: '1.0'
+          uri:
+            Fn::GetAtt:
+              - UserQuestionFAQAnswerer
+              - Arn
+      sampleUtterances:
+        - any chance of appointments opening up for tomorrow
+        - any chance of doses opening up for tomorrow
+        - any chance of slots opening up for tomorrow
+        - any chance of spots opening up for tomorrow
+        - any chance of vaccines opening up for tomorrow
+        - do you know when will be more availability
+        - do you know when will be more doses
+        - do you know when will be more slots
+        - do you know when will be more vaccines
+        - is there any appointment available
+        - is there any doses available
+        - is there any slots available
+        - is there any vaccines available
+        - what time do they usually drop appointments
+        - what time do they usually drop availability
+        - what time do they usually drop doses
+        - what time do they usually drop slots
+        - what time do they usually drop vaccines
+        - when will there be more appointments
+        - when will there be more doses
+        - when will there be more slots
+        - when will there be more vaccines
+
+
 
 
   VaccineBot:
@@ -533,6 +585,9 @@ Resources:
           intentVersion: $LATEST
         - intentName:
             Ref: BookingAppointmentsFAQ
+          intentVersion: $LATEST
+        - intentName:
+            Ref: NoFoundAppointmentsFAQ
           intentVersion: $LATEST
       locale: en-US
       processBehavior: BUILD

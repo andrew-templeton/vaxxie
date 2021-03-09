@@ -804,15 +804,13 @@ Resources:
         'Fn::Sub': '${Namespace}${BotName}'
       abortStatement:
         messages:
-          - content: I don't understand. Can you try again?
-            contentType: PlainText
-          - content: 'I''m sorry, I don''t understand.'
+          - content: 'I am sorry, but I did not understand what you just said. The main way to use me is to ask: Find me a vaccine. If you want to know more about this bot, head to https://github.com/andrew-templeton/vaxxie/blob/master/README.md, or if you want to know more about Texas Vaccine Updates, go here! https://www.notion.so/General-FAQ-cdcb7fa2d55c4179bf94efab1665a40c'
             contentType: PlainText
       childDirected: true
       clarificationPrompt:
         maxAttempts: 1
         messages:
-          - content: 'Join the #help-needed channel and ask.  There are lot of people willing to pitch in to help. That said, the main way to use me is to ask: Find me a vaccine'
+          - content: 'I am sorry, but I did not understand what you just said. The main way to use me is to ask: Find me a vaccine. If you want to know more about this bot, head to https://github.com/andrew-templeton/vaxxie/blob/master/README.md, or if you want to know more about Texas Vaccine Updates, go here! https://www.notion.so/General-FAQ-cdcb7fa2d55c4179bf94efab1665a40c'
             contentType: PlainText
       description:
         Ref: BotDescription

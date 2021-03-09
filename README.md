@@ -17,7 +17,7 @@ If you're in Slack:
 ![](./howto_images/001_OpenDirectMessage-B.png)
 ![](./howto_images/002_MessageVaxxie.png)
 
-Because Vaxxie speaks English, Vaxxie will try to understand what you say in complete sentences or short phrases, and does not need special commands to interact with itf course, Vaxxie does a lot of things, so let's look at an example of each of the things you can ask Vaxxie to do...
+Because Vaxxie speaks English, Vaxxie will try to understand what you say in complete sentences or short phrases, and does not need special commands to interact with it. Of course, Vaxxie does a lot of things, so let's look at an example of each of the things you can ask Vaxxie to do...
 
 
 ###### Find a Vaccine / Add a new search area

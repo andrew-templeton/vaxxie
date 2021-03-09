@@ -16,6 +16,17 @@ const SlotConsistentHash = require('./src/slotConsistentHash')
 
 const SEARCH_CHUNK_CONCURRENCY = 25
 
+const SphericDistance = require('./src/SphericDistance')
+
+const closeEnoughQueries = ({ searchHit: { queries }, slot: { geolocation: { lat: latitude, lon: longitude } } }) => queries
+  .map(({ requestedAt, zipcode, geoSearch: { geo_distance: { geolocation: { lat, lon }, distance } } }) => ({
+    zipcode,
+    requestedAt,
+    computedDistance: SphericDistance({ latitude: lat, longitude: lon }, { latitude, longitude }),
+    distance: parseInt(distance.replace('mi', ''))
+  }))
+  .filter(({ distance, computedDistance }) => computedDistance <= distance)
+
 const {
   BulkToPreferencesIndex,
   BulkToSlotsIndex
@@ -88,9 +99,11 @@ const slots = async ({ Records }) => {
         console.log('WARN: %j', resp)
         return collection
       }
-      const relevantSubscriberUserIds = resp.hits.hits.map(hit => hit._source.userId)
-      relevantSubscriberUserIds.forEach(userId => {
-        collection[userId] = (collection[userId] || []).concat(index)
+      const relevantSubscriberSearches = resp.hits.hits.map(hit => hit._source)
+      relevantSubscriberSearches.forEach(searchHit => {
+        const { userId } = searchHit
+        const queries = closeEnoughQueries({ searchHit, slot })
+        collection[userId] = (collection[userId] || []).concat({ index, queries })
       })
       return collection
     }, {})
@@ -98,20 +111,25 @@ const slots = async ({ Records }) => {
 
     const notificationTasks = Object.keys(collectedHitsByUser).map(userId => ({
       channel: userId,
-      blocks: collectedHitsByUser[userId].map(index => items[index]).map(({
-        geolocation: {
-          lat,
-          lon,
-        },
-        url,
-        provider,
-        slots,
-        location
+      blocks: collectedHitsByUser[userId].map(({ index, queries }) => ({ slot: items[index], queries })).map(({
+        queries,
+        slot: {
+          geolocation: {
+            lat,
+            lon,
+          },
+          url,
+          provider,
+          slots,
+          location
+        }
       }) => ({
         type: 'section',
         text: {
           type: 'mrkdwn',
-          text: `Found ${slots || 'an unknown number of '} slots from ${provider} at <${loc({ lat, lon })}|this location (${location || 'unknown store name'})>. Click <${url}|THIS LINK> to book!`
+          text: `Found ${slots || 'an unknown number of '} slots from ${provider} at <${loc({ lat, lon })}|this location (${location || 'unknown store name'})>.
+This matched your search${queries.length > 1 ? 'es' : ''} ${queries.map(({ zipcode, requestedAt, distance, computedDistance }, index, list) => `${index === list.length - 1 && list.length >= 2 ? 'and ' : ''} near ${zipcode} within ${distance}mi (about ${Math.round(computedDistance * 10) / 10}mi away)`).join(', ')}.
+Click <${url}|THIS LINK> to book!`
         }
       }))
     }))
@@ -129,7 +147,7 @@ const slots = async ({ Records }) => {
           Authorization: `Bearer ${authToken}`
         }
       })
-      console.log(data)
+      console.log('NOTIFICATION SENT: %j', data)
     }
   }
 

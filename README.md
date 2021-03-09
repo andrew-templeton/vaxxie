@@ -120,13 +120,13 @@ This is my personal user with Vaxxie, in complete form, to demonstrate there is 
 
  - Me, Andrew Templeton ([LinkedIn](https://www.linkedin.com/in/andrew-templeton-22883a23/), [Twitter](https://twitter.com/ayetempleton), and [I'm hiring!](https://www.indeed.com/cmp/CSC-Generation/jobs))
  - [Andy Yiu](https://www.linkedin.com/in/andyyiu/) FAQs language model and Vaxxie's response set for user questions
- - [Trev]([Trevor Hedley](https://github.com/codeisafourletter) Helped with the language model for "find me a vaccine" by zipcode.
+ - [Trevor Hedley](https://github.com/codeisafourletter) Helped with the language model for "find me a vaccine" by zipcode.
  - [Vaccine Spotter API](https://www.vaccinespotter.org/) *Heavily* using their data to drive Vaxxie's hits. Not affiliated but love them *dearly*.
 
 
 # NOT AFFILIATED WITH TEXASUPDATES.COM
 
-@James ([Check out his GitHub profile!](https://github.com/jameskip)) from [Texas Vaccine Updates](https://general.texasupdates.com) is a wonderful human and allowed me to use the Slack as my testbed. Additional developers and users in the Slack were integral in testing out Vaxxie when it was just a wee bot. That said, they are not affiliated with this bot in any formal capacity and should NOT be reached out to for support. Developers may open GitHub Issues against the bot. Regular users may reach out to me ([https://twitter.com/ayetempleton]((@ayetempleton) on Twitter) via a tweet or a direct message if they have questions - however, that leads us to warranty... ;)
+@James ([Check out his GitHub profile!](https://github.com/jameskip)) and [Sara Dubuque](https://www.linkedin.com/in/saradubs/) from [Texas Vaccine Updates](https://general.texasupdates.com) are wonderful humans and allowed me to use the Slack as my testbed. Additional developers and users in the Slack were integral in testing out Vaxxie when it was just a wee bot. That said, they are not affiliated with this bot in any formal capacity and should NOT be reached out to for support. Developers may open GitHub Issues against the bot. Regular users may reach out to me ([@ayetempleton](https://twitter.com/ayetempleton) on Twitter) via a tweet or a direct message if they have questions - however, that leads us to warranty... ;)
 
 
 # NO WARRANTY FOR ANY PURPOSE!

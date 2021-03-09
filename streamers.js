@@ -14,6 +14,8 @@ const loc = ({ lat, lon }) => `https://www.google.com/maps/place/${lat},${lon}`
 
 const SlotConsistentHash = require('./src/slotConsistentHash')
 
+const SEARCH_CHUNK_CONCURRENCY = 25
+
 const {
   BulkToPreferencesIndex,
   BulkToSlotsIndex
@@ -55,7 +57,7 @@ const slots = async ({ Records }) => {
 
   await BulkToSlotsIndex(items)
   const hashes = items.map(SlotConsistentHash)
-  const searches = hashes.map(hash => ({
+  const allSearches = hashes.map(hash => ({
     query: {
       nested: {
         path: 'queries',
@@ -70,62 +72,69 @@ const slots = async ({ Records }) => {
     },
     size: 10000
   }))
-  const msearchBody = searches.reduce((body, search) => body.concat([
-    JSON.stringify({}),
-    JSON.stringify(search)
-  ]), []).concat('').join('\n')
-  const result = (await Axios.post(`https://${ES_DOMAIN_ENDPOINT}/${PREFERENCES_INDEX}/_msearch`, msearchBody, { headers })).data
 
-  console.log('%j', result)
-
-  const collectedHitsByUser = items.reduce((collection, slot, index) => {
-    const resp = result.responses[index]
-    if (!resp || !resp.hits || !Array.isArray(resp.hits.hits)) {
-      console.log('WARN: %j', resp)
-      return collection
-    }
-    const relevantSubscriberUserIds = resp.hits.hits.map(hit => hit._source.userId)
-    relevantSubscriberUserIds.forEach(userId => {
-      collection[userId] = (collection[userId] || []).concat(index)
-    })
-    return collection
-  }, {})
-  // [userId] => [index of slots to notify them about]
-
-  const notificationTasks = Object.keys(collectedHitsByUser).map(userId => ({
-    channel: userId,
-    blocks: collectedHitsByUser[userId].map(index => items[index]).map(({
-      geolocation: {
-        lat,
-        lon,
-      },
-      url,
-      provider,
-      slots,
-      location
-    }) => ({
-      type: 'section',
-      text: {
-        type: 'mrkdwn',
-        text: `Found ${slots || 'an unknown number of '} slots from ${provider} at <${loc({ lat, lon })}|this location (${location || 'unknown store name'})>. Click <${url}|THIS LINK> to book!`
-      }
-    }))
-  }))
-
-  if (!notificationTasks.length) {
-    console.log('No notification tasks.')
-    return 'ok'
+  while (allSearches.length) {
+    await processChunkOfSearches(allSearches.splice(0, SEARCH_CHUNK_CONCURRENCY))
   }
 
-  const authToken = await SlackInboundSecret()
+  const processChunkOfSearches = async searches => {
+    const msearchBody = searches.reduce((body, search) => body.concat([
+      JSON.stringify({}),
+      JSON.stringify(search)
+    ]), []).concat('').join('\n')
+    const result = (await Axios.post(`https://${ES_DOMAIN_ENDPOINT}/${PREFERENCES_INDEX}/_msearch`, msearchBody, { headers })).data
 
-  for (let ii = 0; ii < notificationTasks.length; ii++) {
-    const { data } = await Axios.post(SLACK_API, notificationTasks[ii], {
-      headers: {
-        Authorization: `Bearer ${authToken}`
+    console.log('%j', result)
+
+    const collectedHitsByUser = items.reduce((collection, slot, index) => {
+      const resp = result.responses[index]
+      if (!resp || !resp.hits || !Array.isArray(resp.hits.hits)) {
+        console.log('WARN: %j', resp)
+        return collection
       }
-    })
-    console.log(data)
+      const relevantSubscriberUserIds = resp.hits.hits.map(hit => hit._source.userId)
+      relevantSubscriberUserIds.forEach(userId => {
+        collection[userId] = (collection[userId] || []).concat(index)
+      })
+      return collection
+    }, {})
+    // [userId] => [index of slots to notify them about]
+
+    const notificationTasks = Object.keys(collectedHitsByUser).map(userId => ({
+      channel: userId,
+      blocks: collectedHitsByUser[userId].map(index => items[index]).map(({
+        geolocation: {
+          lat,
+          lon,
+        },
+        url,
+        provider,
+        slots,
+        location
+      }) => ({
+        type: 'section',
+        text: {
+          type: 'mrkdwn',
+          text: `Found ${slots || 'an unknown number of '} slots from ${provider} at <${loc({ lat, lon })}|this location (${location || 'unknown store name'})>. Click <${url}|THIS LINK> to book!`
+        }
+      }))
+    }))
+
+    if (!notificationTasks.length) {
+      console.log('No notification tasks.')
+      return 'ok'
+    }
+
+    const authToken = await SlackInboundSecret()
+
+    for (let ii = 0; ii < notificationTasks.length; ii++) {
+      const { data } = await Axios.post(SLACK_API, notificationTasks[ii], {
+        headers: {
+          Authorization: `Bearer ${authToken}`
+        }
+      })
+      console.log(data)
+    }
   }
 
   console.log('%j', result)

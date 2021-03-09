@@ -24,10 +24,17 @@ const es = async () => {
 const pingEs = async () => {
   const response = (await Axios.get(`https://${ES_DOMAIN_ENDPOINT}/_search`, { params: { size: '1000' } })).data
   console.log('%j', response)
-  return JSON.stringify(response)
+  return JSON.stringify(response, null, 2)
+}
+
+const execute = async ({ url, arg, method }) => {
+  const response = (await Axios[method](url, arg)).data
+  console.log('%j', response)
+  return JSON.stringify(response, null, 2)
 }
 
 module.exports = {
   es,
-  pingEs
+  pingEs,
+  execute
 }

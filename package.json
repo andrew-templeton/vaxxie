@@ -35,5 +35,8 @@
     "heb-cheater": "^1.3.3",
     "jsonschema": "^1.4.0",
     "node-html-parser": "^3.0.4"
+  },
+  "devDependencies": {
+    "aws-sdk": "^2.859.0"
   }
 }

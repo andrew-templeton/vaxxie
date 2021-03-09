@@ -79,7 +79,12 @@ const slots = async ({ Records }) => {
   console.log('%j', result)
 
   const collectedHitsByUser = items.reduce((collection, slot, index) => {
-    const relevantSubscriberUserIds = result.responses[index].hits.hits.map(hit => hit._source.userId)
+    const resp = result.responses[index]
+    if (!resp || !resp.hits || !Array.isArray(resp.hits.hits)) {
+      console.log('WARN: %j', resp)
+      return collection
+    }
+    const relevantSubscriberUserIds = resp.hits.hits.map(hit => hit._source.userId)
     relevantSubscriberUserIds.forEach(userId => {
       collection[userId] = (collection[userId] || []).concat(index)
     })

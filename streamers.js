@@ -25,7 +25,7 @@ const SlackInboundSecret = require('./src/slackInboundSecret')
 
 const slots = async ({ Records }) => {
   console.log('%j', Records)
-  const items = Records.filter(({ eventName }) => eventName !== 'REMOVE').map(({ dynamodb: { NewImage } }) => AWS.DynamoDB.Converter.unmarshall(NewImage)).map(({
+  const allItems = Records.filter(({ eventName }) => eventName !== 'REMOVE').map(({ dynamodb: { NewImage } }) => AWS.DynamoDB.Converter.unmarshall(NewImage)).map(({
     id,
     utime,
     provider,
@@ -51,12 +51,12 @@ const slots = async ({ Records }) => {
     slots
   }))
 
-  if (!items.length) {
+  if (!allItems.length) {
     return 'ok'
   }
 
-  await BulkToSlotsIndex(items)
-  const hashes = items.map(SlotConsistentHash)
+  await BulkToSlotsIndex(allItems)
+  const hashes = allItems.map(SlotConsistentHash)
   const allSearches = hashes.map(hash => ({
     query: {
       nested: {
@@ -73,11 +73,7 @@ const slots = async ({ Records }) => {
     size: 10000
   }))
 
-  while (allSearches.length) {
-    await processChunkOfSearches(allSearches.splice(0, SEARCH_CHUNK_CONCURRENCY))
-  }
-
-  const processChunkOfSearches = async searches => {
+  const processChunkOfSearches = async ({ searches, items }) => {
     const msearchBody = searches.reduce((body, search) => body.concat([
       JSON.stringify({}),
       JSON.stringify(search)
@@ -137,7 +133,13 @@ const slots = async ({ Records }) => {
     }
   }
 
-  console.log('%j', result)
+  while (allSearches.length) {
+    await processChunkOfSearches({
+      searches: allSearches.splice(0, SEARCH_CHUNK_CONCURRENCY),
+      items: allItems.splice(0, SEARCH_CHUNK_CONCURRENCY)
+    })
+  }
+
   return 'ok'
 }
 

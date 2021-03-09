@@ -40,6 +40,12 @@ Parameters:
   DomainName:
     Type: String
     Default: test
+  AnnouncementChannel:
+    Type: String
+    Default: C01L4DNQY8K
+  BotUserId:
+    Type: String
+    Default: U01PEHYJ8ET
 Resources:
 
   SecretForSlackKey:
@@ -1138,6 +1144,33 @@ Resources:
         SubnetIds:
           - Ref: PrivateSubnetAlpha
           - Ref: PrivateSubnetBravo
+
+  AnnounceThyselfHandler:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: .
+      Runtime: nodejs12.x
+      Handler: announce.thyself
+      MemorySize: 3008
+      Timeout: 30
+      Policies:
+        - AWSSecretsManagerGetSecretValuePolicy:
+            SecretArn:
+              Ref: SecretForSlackKey
+      Environment:
+        Variables:
+          ANNOUNCEMENT_CHANNEL:
+            Ref: AnnouncementChannel
+          SLACK_SECRET:
+            Ref: SecretForSlackKey
+          BOT_USER_ID:
+            Ref: BotUserId
+      Events:
+        AnnounceEverySixHours:
+          Type: Schedule
+          Properties:
+            Enabled: true
+            Schedule: rate(6 hours)
 
   VaccineSpotter:
     Type: AWS::Serverless::Function

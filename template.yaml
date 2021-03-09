@@ -1038,6 +1038,12 @@ Resources:
       MemorySize: 3008
       Timeout: 900
       Policies:
+        - Version: '2012-10-17'
+          Statement:
+            - Effect: Allow
+              Action:
+                - cloudwatch:PutMetricData
+              Resource: "*"
         - AWSSecretsManagerGetSecretValuePolicy:
             SecretArn:
               Ref: SecretForSlackKey
@@ -1072,6 +1078,8 @@ Resources:
           SLOTS_INDEX: slots
           SLACK_SECRET:
             Ref: SecretForSlackKey
+          BOT_USER_ID:
+            Ref: BotUserId
       VpcConfig:
         SecurityGroupIds:
           - Ref: ElasticsearchAccessorGroup

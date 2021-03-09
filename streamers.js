@@ -1,10 +1,12 @@
 
 const AWS = require('aws-sdk')
+const CloudWatch = new AWS.CloudWatch()
 const Axios = require('axios')
 
-const { PREFERENCES_INDEX, SLOTS_INDEX, ES_DOMAIN_ENDPOINT } = process.env
+const { PREFERENCES_INDEX, SLOTS_INDEX, ES_DOMAIN_ENDPOINT, BOT_USER_ID } = process.env
 
 const SLACK_API = 'https://slack.com/api/chat.postMessage'
+const BOT_METRICS_NAMESPACE = 'Vaxxie'
 
 const headers = {
   'Content-Type': 'application/x-ndjson' // Lovely one from ES docs
@@ -36,6 +38,8 @@ const SlackInboundSecret = require('./src/slackInboundSecret')
 
 const slots = async ({ Records }) => {
   console.log('%j', Records)
+  let totalNotificationsSent = 0
+  let totalNotificationsErrored = 0
   const allItems = Records.filter(({ eventName }) => eventName !== 'REMOVE').map(({ dynamodb: { NewImage } }) => AWS.DynamoDB.Converter.unmarshall(NewImage)).map(({
     id,
     utime,
@@ -142,12 +146,18 @@ Click <${url}|THIS LINK> to book!`
     const authToken = await SlackInboundSecret()
 
     for (let ii = 0; ii < notificationTasks.length; ii++) {
-      const { data } = await Axios.post(SLACK_API, notificationTasks[ii], {
-        headers: {
-          Authorization: `Bearer ${authToken}`
-        }
-      })
-      console.log('NOTIFICATION SENT: %j', data)
+      try {
+        const { data } = await Axios.post(SLACK_API, notificationTasks[ii], {
+          headers: {
+            Authorization: `Bearer ${authToken}`
+          }
+        })
+        console.log('NOTIFICATION SENT: %j', data)
+        totalNotificationsSent++
+      } catch (notificationError) {
+        console.error('NOTIFICATION ERROR: ', notificationError)
+        totalNotificationsErrored++
+      }
     }
   }
 
@@ -157,6 +167,43 @@ Click <${url}|THIS LINK> to book!`
       items: allItems.splice(0, SEARCH_CHUNK_CONCURRENCY)
     })
   }
+
+  console.log('Notification statistics: %j', {
+    totalNotificationsSent,
+    totalNotificationsErrored
+  })
+  const Timestamp = Math.floor(Date.now() / 1000)
+  await (CloudWatch.putMetricData({
+    Namespace: BOT_METRICS_NAMESPACE,
+    MetricData: [
+      {
+        MetricName: 'NotificationsSent',
+        Dimensions: [
+          {
+            Name: 'BotUserId',
+            Value: BOT_USER_ID
+          }
+        ],
+        Value: totalNotificationsSent,
+        StorageResolution: 60,
+        Timestamp,
+        Unit: 'Count'
+      },
+      {
+        MetricName: 'NotificationsErrored',
+        Dimensions: [
+          {
+            Name: 'BotUserId',
+            Value: BOT_USER_ID
+          }
+        ],
+        Value: totalNotificationsErrored,
+        StorageResolution: 60,
+        Timestamp,
+        Unit: 'Count'
+      }
+    ]
+  }).promise())
 
   return 'ok'
 }

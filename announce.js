@@ -28,7 +28,7 @@ const thyself = async () => {
         type: 'section',
         text: {
           type: 'mrkdwn',
-          text: `If you message me and ask something like "Can you find me a vaccine?", I will ask you where and how far. Then, I'll look for vaccines inside that area 24/7 just for you, and send you a push notification on if I am able to find any indicated availability from providers Slack!`
+          text: `If you message me and ask something like "Can you find me a vaccine?", I will ask you where and how far. Then, I'll look for vaccines inside that area 24/7 just for you, and send you a push notification on Slack if I am able to find any indicated availability from providers!`
         }
       },
       {
@@ -91,8 +91,8 @@ const thyself = async () => {
         type: 'section',
         text: {
           type: 'mrkdwn',
-          text: `<https://github.com/andrew-templeton/vaxxie/blob/master/README.md#no-warranty-for-any-purpose|NO WARRANTY FOR ANY PURPOSE>, <https://github.com/andrew-templeton/vaxxie#you-are-solely-responsible-for-verifying-eligibility-of-the-people-you-use-to-book-this-for|YOU ARE SOLELY RESPOSIBLE FOR VERIFYING ELIGIBILITY OF THE PEOPLE YOU USE TO BOOK THIS FOR>, <https://github.com/andrew-templeton/vaxxie#no-representations-of-medical-advice-legal-advice-or-statements-of-fact|NO REPRESENTATIONS OF MEDICAL ADVICE, LEGAL ADVICE, OR STATEMENTS OF FACT>, <https://github.com/andrew-templeton/vaxxie#not-fit-for-use-by-minors-or-dependents|NOT FIT FOR USE BY MINORS OR DEPENDENTS>, <https://github.com/andrew-templeton/vaxxie#fair-use|FAIR USE
->, <https://github.com/andrew-templeton/vaxxie#may-shut-down-at-the-sole-discretion-of-operators|MAY SHUT DOWN AT THE SOLE DISCRETION OF OPERATORS>`
+          text: `(legal stuff I have to put since one could technically misuse the bot :anguished:)
+<https://github.com/andrew-templeton/vaxxie/blob/master/README.md#no-warranty-for-any-purpose|NO WARRANTY FOR ANY PURPOSE>, <https://github.com/andrew-templeton/vaxxie#you-are-solely-responsible-for-verifying-eligibility-of-the-people-you-use-to-book-this-for|YOU ARE SOLELY RESPOSIBLE FOR VERIFYING ELIGIBILITY OF THE PEOPLE YOU USE TO BOOK THIS FOR>, <https://github.com/andrew-templeton/vaxxie#no-representations-of-medical-advice-legal-advice-or-statements-of-fact|NO REPRESENTATIONS OF MEDICAL ADVICE, LEGAL ADVICE, OR STATEMENTS OF FACT>, <https://github.com/andrew-templeton/vaxxie#not-fit-for-use-by-minors-or-dependents|NOT FIT FOR USE BY MINORS OR DEPENDENTS>, <https://github.com/andrew-templeton/vaxxie#fair-use|FAIR USE>, <https://github.com/andrew-templeton/vaxxie#may-shut-down-at-the-sole-discretion-of-operators|MAY SHUT DOWN AT THE SOLE DISCRETION OF OPERATORS>`
         }
       }
     ]

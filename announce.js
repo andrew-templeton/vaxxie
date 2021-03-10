@@ -35,7 +35,7 @@ const thyself = async () => {
         type: 'section',
         text: {
           type: 'mrkdwn',
-          text: `I search HEB, Walmart, Walgreens, Riteaid, CVS, and several more national providers. I do not currently have a way to find a specific vaccine type, and I look for any of the J&J, Moderna, and Pfizer vaccines, so keep that in mind.`
+          text: `I search HEB, Walmart, Walgreens, Riteaid, CVS, and several more national providers. I do not currently have a way to find a specific vaccine type, and I look for any of the J&J, Moderna, and Pfizer vaccines, so keep that in mind. Trademarks property of their respective owners, not affiliated with any seller or manufacturer of vaccines.`
         }
       },
       {
@@ -87,13 +87,14 @@ const thyself = async () => {
           text: `:heart::syringe::heart: <@${BOT_USER_ID}>`
         }
       },
-      // {
-      //   type: 'section',
-      //   text: {
-      //     type: 'mrkdwn',
-      //     text: `<https://github.com/andrew-templeton/vaxxie/blob/master/README.md#no-warranty-for-any-purpose|NO WARRANTY FOR ANY PURPOSE> & <|YOU ARE SOLELY RESPOSIBLE FOR VERIFYING ELIGIBILITY OF THE PEOPLE YOU USE TO BOOK THIS FOR>`
-      //   }
-      // }
+      {
+        type: 'section',
+        text: {
+          type: 'mrkdwn',
+          text: `<https://github.com/andrew-templeton/vaxxie/blob/master/README.md#no-warranty-for-any-purpose|NO WARRANTY FOR ANY PURPOSE>, <https://github.com/andrew-templeton/vaxxie#you-are-solely-responsible-for-verifying-eligibility-of-the-people-you-use-to-book-this-for|YOU ARE SOLELY RESPOSIBLE FOR VERIFYING ELIGIBILITY OF THE PEOPLE YOU USE TO BOOK THIS FOR>, <https://github.com/andrew-templeton/vaxxie#no-representations-of-medical-advice-legal-advice-or-statements-of-fact|NO REPRESENTATIONS OF MEDICAL ADVICE, LEGAL ADVICE, OR STATEMENTS OF FACT>, <https://github.com/andrew-templeton/vaxxie#not-fit-for-use-by-minors-or-dependents|NOT FIT FOR USE BY MINORS OR DEPENDENTS>, <https://github.com/andrew-templeton/vaxxie#fair-use|FAIR USE
+>, <https://github.com/andrew-templeton/vaxxie#may-shut-down-at-the-sole-discretion-of-operators|MAY SHUT DOWN AT THE SOLE DISCRETION OF OPERATORS>`
+        }
+      }
     ]
   }
   await Axios.post(SLACK_API, announcement, config)

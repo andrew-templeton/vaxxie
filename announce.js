@@ -28,7 +28,7 @@ const thyself = async () => {
         type: 'section',
         text: {
           type: 'mrkdwn',
-          text: `If you message me and ask something like "Can you find me a vaccine?", I will ask you where and how far. Then, I'll look for vaccines inside that area 24/7 just for you, and send you a push notification on Slack!`
+          text: `If you message me and ask something like "Can you find me a vaccine?", I will ask you where and how far. Then, I'll look for vaccines inside that area 24/7 just for you, and send you a push notification on if I am able to find any indicated availability from providers Slack!`
         }
       },
       {
@@ -86,7 +86,14 @@ const thyself = async () => {
           type: 'mrkdwn',
           text: `:heart::syringe::heart: <@${BOT_USER_ID}>`
         }
-      }
+      },
+      // {
+      //   type: 'section',
+      //   text: {
+      //     type: 'mrkdwn',
+      //     text: `<https://github.com/andrew-templeton/vaxxie/blob/master/README.md#no-warranty-for-any-purpose|NO WARRANTY FOR ANY PURPOSE> & <|YOU ARE SOLELY RESPOSIBLE FOR VERIFYING ELIGIBILITY OF THE PEOPLE YOU USE TO BOOK THIS FOR>`
+      //   }
+      // }
     ]
   }
   await Axios.post(SLACK_API, announcement, config)

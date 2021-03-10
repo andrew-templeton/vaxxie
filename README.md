@@ -132,3 +132,24 @@ This is my personal user with Vaxxie, in complete form, to demonstrate there is 
 # NO WARRANTY FOR ANY PURPOSE!
 
 THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+
+# YOU ARE SOLELY RESPONSIBLE FOR VERIFYING ELIGIBILITY OF THE PEOPLE YOU USE TO BOOK THIS FOR
+
+I am not a lawyer or healthcare professional. Neither I, this application, nor any contributors make any representations regarding you or anyone you books' eligibility to make a booking in your respective state. It is the sole responsibility of the user to make sure that their use is within fair and legal use within said user and appointment holder's state.
+
+# NO REPRESENTATIONS OF MEDICAL ADVICE, LEGAL ADVICE, OR STATEMENTS OF FACT
+
+The information provided herein is not legal advice. I am not a lawyer. The information provided herein is not medical advice. I am not a medical practitioner. The information provided herein is not guaranteed accurate, and it prone to error due to the evolving nature of vaccine availability and policy. It is your sole responsibility to verify the current governmental policies and laws pertaining to vaccine allocation. It is your sole responsibility to verify that any vaccines or vaccine appointments displaying as available are appropriate for use for you or the person for whom you are booking.
+
+# NOT FIT FOR USE BY MINORS OR DEPENDENTS
+
+You may not use this application unless you are of the legal age of majority in your jurisdiction. Use of this system or interaction with it is forbidden if you are a minor or otherwise not legally able to make your own decisions. Do not interact with Vaxxie or any related software if you fall into these categories.
+
+# FAIR USE
+
+You may not use this tool to bypass computer systems of any governmental agency network, corporate network, or any other third party network. Do not use this tool to perform automated bookings. Do not use this tool to "hold" appointment slots.
+
+# MAY SHUT DOWN AT THE SOLE DISCRETION OF OPERATORS
+
+The software may cease to be offered without any cause, warning, or reason. The software and running systems are operated at an may be shut down at the sole discretion of the operators. You are not entitled to any continuing operation of the services.

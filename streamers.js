@@ -133,7 +133,7 @@ const slots = async ({ Records }) => {
           type: 'mrkdwn',
           text: `Found ${slots || 'an unknown number of '} slots from ${provider} at <${loc({ lat, lon })}|this location (${location || 'unknown store name'})>.
 This matched your search${queries.length > 1 ? 'es' : ''} ${queries.map(({ zipcode, requestedAt, distance, computedDistance }, index, list) => `${index === list.length - 1 && list.length >= 2 ? 'and ' : ''} near ${zipcode} within ${distance}mi (about ${Math.round(computedDistance * 10) / 10}mi away)`).join(', ')}.
-Click <${url}|THIS LINK> to book!`
+Click <${url}|THIS LINK> for the providers's website!`
         }
       }))
     }))

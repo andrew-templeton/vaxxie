@@ -82,42 +82,42 @@ Resources:
         - intentName:
             Ref: SearchForVaccineEs
           intentVersion: $LATEST
-        # - intentName:
-        #     Ref: CancelAppointmentsFAQEs
-        #   intentVersion: $LATEST
-        # - intentName:
-        #     Ref: RescheduleAppointmentsFAQEs
-        #   intentVersion: $LATEST
-        # - intentName:
-        #     Ref: TransferAppointmentsFAQEs
-        #   intentVersion: $LATEST
-        # - intentName:
-        #     Ref: LateApptAppointmentsFAQEs
-        #   intentVersion: $LATEST
-        # - intentName:
-        #     Ref: LeftoverAppointmentsFAQEs
-        #   intentVersion: $LATEST
-        # - intentName:
-        #     Ref: SecondAppointmentsFAQEs
-        #   intentVersion: $LATEST
-        # - intentName:
-        #     Ref: DocumentationAppointmentsFAQEs
-        #   intentVersion: $LATEST
-        # - intentName:
-        #     Ref: BookingAppointmentsFAQEs
-        #   intentVersion: $LATEST
-        # - intentName:
-        #     Ref: NoFoundAppointmentsFAQEs
-        #   intentVersion: $LATEST
-        # - intentName:
-        #     Ref: ListVaccineSearchesEs
-        #   intentVersion: $LATEST
+        - intentName:
+            Ref: CancelAppointmentsFAQEs
+          intentVersion: $LATEST
+        - intentName:
+            Ref: RescheduleAppointmentsFAQEs
+          intentVersion: $LATEST
+        - intentName:
+            Ref: TransferAppointmentsFAQEs
+          intentVersion: $LATEST
+        - intentName:
+            Ref: LateApptAppointmentsFAQEs
+          intentVersion: $LATEST
+        - intentName:
+            Ref: LeftoverAppointmentsFAQEs
+          intentVersion: $LATEST
+        - intentName:
+            Ref: SecondAppointmentsFAQEs
+          intentVersion: $LATEST
+        - intentName:
+            Ref: DocumentationAppointmentsFAQEs
+          intentVersion: $LATEST
+        - intentName:
+            Ref: BookingAppointmentsFAQEs
+          intentVersion: $LATEST
+        - intentName:
+            Ref: NoFoundAppointmentsFAQEs
+          intentVersion: $LATEST
+        - intentName:
+            Ref: ListVaccineSearchesEs
+          intentVersion: $LATEST
         - intentName:
             Ref: UpdateVaccineSearchEs
           intentVersion: $LATEST
-        # - intentName:
-        #     Ref: RemoveVaccineSearchEs
-        #   intentVersion: $LATEST
+        - intentName:
+            Ref: RemoveVaccineSearchEs
+          intentVersion: $LATEST
       locale: es-US
       processBehavior: BUILD
 
@@ -161,36 +161,36 @@ Resources:
           - content: 'Cancelé su búsqueda.'
             contentType: PlainText
       sampleUtterances:
-        - Encuentrame una vacuna
-        - Dónde puedo obtener una vacuna dentro {Distance} millas
-        - Encuentra citas dentro {Distance} millas de {Zipcode}
-        - Por favor ayúdame a encontrar una cita
-        - Por favor ayúdame a encontrar una vacuna
-        - Quiero una cita
-        - Encontrar una vacuna en {Zipcode}
-        - Necesito encontrar una vacuna de dos dosis dentro {Distance} millas de código postal {Zipcode}
-        - Necesito encontrar una vacuna dentro {Distance} millas de código postal {Zipcode}
-        - encontrar otra vacuna
         - añadir una nueva búsqueda
+        - buscar en otra parte
         - buscar en otro lugar
         - buscar en una nueva zona
-        - encontrar una vacuna en una nueva zona
+        - dónde puedo obtener una vacuna dentro {Distance} millas
+        - encontrar otra vacuna
         - encontrar una nueva vacuna para mi
-        - Quiero establecer una nueva búsqueda
-        - Quiero mirar en otro sitio
-        - buscar en otra parte
+        - encontrar una vacuna en una nueva zona
+        - encontrar una vacuna en {Zipcode}
+        - encuentra citas dentro {Distance} millas de {Zipcode}
+        - encuentrame una vacuna
+        - necesito encontrar una vacuna de dos dosis dentro {Distance} millas de código postal {Zipcode}
+        - necesito encontrar una vacuna dentro {Distance} millas de código postal {Zipcode}
+        - por favor ayúdame a encontrar una cita
+        - por favor ayúdame a encontrar una vacuna
+        - quiero establecer una nueva búsqueda
+        - quiero mirar en otro sitio
+        - quiero una cita
       slots:
         - name: Distance
           description: The distance in miles to allow notifications
           priority: 1
           sampleUtterances:
-            - No más de {Distance}
-            - No más de {Distance} millas
-            - Podría viajar hasta {Distance} millas
-            - Podría viajar hasta {Distance}
-            - Puedo ir {Distance} millas
-            - Dentro de {Distance}
-            - Dentro de {Distance} por favor
+            - dentro de {Distance}
+            - dentro de {Distance} por favor
+            - no más de {Distance}
+            - no más de {Distance} millas
+            - podría viajar hasta {Distance}
+            - podría viajar hasta {Distance} millas
+            - puedo ir {Distance} millas
           slotConstraint: Required
           slotType: AMAZON.NUMBER
           valueElicitationPrompt:
@@ -206,12 +206,12 @@ Resources:
           description: The zip code of the search origin
           priority: 2
           sampleUtterances:
-            - Código postal {Zipcode}
-            - Mi código postal es {Zipcode}
-            - Vivo en {Zipcode}
-            - Comenzar búsqueda en {Zipcode}
-            - Buscar en {Zipcode}
-            - Cerca del codigo {Zipcode}
+            - buscar en {Zipcode}
+            - cerca del codigo {Zipcode}
+            - comenzar búsqueda en {Zipcode}
+            - código postal {Zipcode}
+            - mi código postal es {Zipcode}
+            - vivo en {Zipcode}
           slotConstraint: Required
           slotType: AMAZON.NUMBER
           valueElicitationPrompt:
@@ -261,41 +261,40 @@ Resources:
           - content: Cancelé su cambio a la búsqueda.
             contentType: PlainText
       sampleUtterances:
-        - Cambia mi búsqueda
-        - Actualiza de mi búsqueda
-        - mira en otro lugar
-        - cambia mi búsqueda a {Distance} millas de {Zipcode}
-        - cambia mi búsqueda rápida para que {Distance} desde {Zipcode}
-        - Actualiza de la búsqueda a la que {Distance} millas de {Zipcode}
-        - Cambia mi búsqueda para ser {Distance} millas de {Zipcode}
-        - Actualiza de la búsqueda a la que {Distance} desde mi {Zipcode}
-        - altera mi búsqueda para ser {Distance} desde mi {Zipcode}
-        - Cambia la búsqueda a {Distance} millas
-        - Actualiza de la búsqueda a {Distance} millas
-        - Cambia mi búsqueda para ser {Distance} millas
-        - Cambia la búsqueda a ser en {Zipcode}
-        - Cambia mi búsqueda para estar en {Zipcode}
-        - Actualiza la búsqueda a estar en {Zipcode}
-        - Cambia mi búsqueda para estar cerca {Zipcode}
-        - altera mi búsqueda para estar cerca {Zipcode}
-        - Actualización de la búsqueda a estar cerca {Zipcode}
-        - Cambia la búsqueda {Searchnumber} a {Distance} millas de {Zipcode}
-        - Cambia búsqueda {Searchnumber} a {Distance} de {Zipcode}
-        - actualización de la búsqueda {Searchnumber} que sea {Distance} millas de {Zipcode}
-        - Cambia la búsqueda a ser {Searchnumber} {Distance} de {Zipcode}
+        - actualiza de la búsqueda a la que {Distance} desde mi {Zipcode}
+        - actualiza de la búsqueda a la que {Distance} millas de {Zipcode}
+        - actualiza de la búsqueda a {Distance} millas
         - actualiza de la búsqueda {Searchnumber} sea {Distance} desde mi {Zipcode}
-        - Cambia la búsqueda {Searchnumber} sea {Distance} desde mi {Zipcode}
-
+        - actualiza de mi búsqueda
+        - actualiza la búsqueda a estar en {Zipcode}
+        - actualización de la búsqueda a estar cerca {Zipcode}
+        - actualización de la búsqueda {Searchnumber} que sea {Distance} millas de {Zipcode}
+        - altera mi búsqueda para estar cerca {Zipcode}
+        - altera mi búsqueda para ser {Distance} desde mi {Zipcode}
+        - cambia búsqueda {Searchnumber} a {Distance} de {Zipcode}
+        - cambia la búsqueda a ser en {Zipcode}
+        - cambia la búsqueda a ser {Searchnumber} {Distance} de {Zipcode}
+        - cambia la búsqueda a {Distance} millas
+        - cambia la búsqueda {Searchnumber} a {Distance} millas de {Zipcode}
+        - cambia la búsqueda {Searchnumber} sea {Distance} desde mi {Zipcode}
+        - cambia mi búsqueda
+        - cambia mi búsqueda a {Distance} millas de {Zipcode}
+        - cambia mi búsqueda para estar cerca {Zipcode}
+        - cambia mi búsqueda para estar en {Zipcode}
+        - cambia mi búsqueda para ser {Distance} millas
+        - cambia mi búsqueda para ser {Distance} millas de {Zipcode}
+        - cambia mi búsqueda rápida para que {Distance} desde {Zipcode}
+        - mira en otro lugar
       slots:
         - name: Searchnumber
           description: The one-indexed index of the search to edit
           priority: 1
           sampleUtterances:
-            - Reemplazar número {Searchnumber} por favor
-            - Sustituir {Searchnumber}
             - "{Searchnumber} por favor"
-            - la {Searchnumber}
             - el {Searchnumber} por favor
+            - la {Searchnumber}
+            - sustituir {Searchnumber}
+            - reemplazar número {Searchnumber} por favor
           slotConstraint: Required
           slotType: AMAZON.NUMBER
           valueElicitationPrompt:
@@ -307,13 +306,13 @@ Resources:
           description: The distance in miles to allow notifications
           priority: 2
           sampleUtterances:
-            - No más de {Distance}
-            - No más de {Distance} millas
-            - Podría viajar hasta {Distance} millas
-            - Podría viajar hasta {Distance}
-            - Puedo ir {Distance} millas
-            - Dentro de {Distance}
-            - Dentro de {Distance} por favor
+            - dentro de {Distance}
+            - dentro de {Distance} por favor
+            - no más de {Distance}
+            - no más de {Distance} millas
+            - podría viajar hasta {Distance}
+            - podría viajar hasta {Distance} millas
+            - puedo ir {Distance} millas
           slotConstraint: Required
           slotType: AMAZON.NUMBER
           valueElicitationPrompt:
@@ -329,12 +328,12 @@ Resources:
           description: The zip code of the search origin
           priority: 3
           sampleUtterances:
-            - Código postal {Zipcode}
-            - Mi código postal es {Zipcode}
-            - Vivo en {Zipcode}
-            - Comenzar búsqueda en {Zipcode}
-            - Buscar en {Zipcode}
-            - Cerca del codigo {Zipcode}
+            - buscar en {Zipcode}
+            - cerca del codigo {Zipcode}
+            - comenzar búsqueda en {Zipcode}
+            - código postal {Zipcode}
+            - mi código postal es {Zipcode}
+            - vivo en {Zipcode}
           slotConstraint: Required
           slotType: AMAZON.NUMBER
           valueElicitationPrompt:
@@ -384,32 +383,29 @@ Resources:
           - content: Me cancelaron su cambio a su búsqueda.
             contentType: PlainText
       sampleUtterances:
-        - eliminar búsqueda {Searchnumber}
-        - eliminar mi búsqueda {Searchnumber}
         - borrar búsqueda {Searchnumber}
-        - eliminar mi búsqueda {Searchnumber}
-        - eliminar mi búsqueda
-        - deja de buscar
-        - Parar la búsqueda
-        - detener mi búsqueda
-        - parar la búsqueda
-        - eliminar mi búsqueda
-        - quitar una de estas búsquedas
         - borrar una de estas búsquedas
-        - Quiero eliminar una de mis búsquedas
-        - Quiero borrar una de mis búsquedas
-        - por favor borra una búsqueda
+        - deja de buscar
+        - detener mi búsqueda
+        - eliminar búsqueda {Searchnumber}
+        - eliminar mi búsqueda
+        - eliminar mi búsqueda {Searchnumber}
+        - parar la búsqueda
         - parar la búsqueda en uno de estos lugares
+        - por favor borra una búsqueda
+        - quiero borrar una de mis búsquedas
+        - quiero eliminar una de mis búsquedas
+        - quitar una de estas búsquedas
       slots:
         - name: Searchnumber
           description: The one-indexed index of the search to edit
           priority: 1
           sampleUtterances:
-            - Reemplazar número {Searchnumber} por favor
-            - Sustituir {Searchnumber}
             - "{Searchnumber} por favor"
-            - la {Searchnumber}
             - el {Searchnumber} por favor
+            - la {Searchnumber}
+            - reemplazar número {Searchnumber} por favor
+            - sustituir {Searchnumber}
           slotConstraint: Required
           slotType: AMAZON.NUMBER
           valueElicitationPrompt:
@@ -497,21 +493,20 @@ Resources:
               - UserQuestionFAQAnswerer
               - Arn
       sampleUtterances:
-        - Cómo puedo cancelar
-        - No puedo hacer la cita
-        - Cómo se cancela
-        - Cómo canceló Ud.
-        - uno de mis vecinos no puede asistir a su cita
-        - Cómo cancelamos una cita
-        - Estoy tratando de cancelar
-        - necesito cancelar mi cita
+        - alguien sabe cómo cancelar
+        - cómo cancelamos una cita
+        - cómo canceló ud.
+        - cómo puedo cancelar
+        - cómo se cancela
+        - cómo se canceló
         - enlace para cancelar
-        - Hay un número para cancelar la cita
-        - Hay un correo electrónico para cancelar
-        - Alguien sabe cómo cancelar
         - estoy intentando cancelar
-        - Cómo se canceló
-
+        - estoy tratando de cancelar
+        - hay un correo electrónico para cancelar
+        - hay un número para cancelar la cita
+        - necesito cancelar mi cita
+        - no puedo hacer la cita
+        - uno de mis vecinos no puede asistir a su cita
   RescheduleAppointmentsFAQLambdaPermissionEs:
     Type: AWS::Lambda::Permission
     Properties:
@@ -540,10 +535,10 @@ Resources:
               - UserQuestionFAQAnswerer
               - Arn
       sampleUtterances:
-        - Se puede reprogramar citas
-        - Cómo reprogramar
-        - Cómo se reprograma
-        - Cómo puedo cambiar la fecha
+        - cómo puedo cambiar la fecha
+        - cómo reprogramar
+        - cómo se reprograma
+        - se puede reprogramar citas
 
   TransferAppointmentsFAQLambdaPermissionEs:
     Type: AWS::Lambda::Permission
@@ -573,10 +568,10 @@ Resources:
               - UserQuestionFAQAnswerer
               - Arn
       sampleUtterances:
-        - Son transferibles
-        - Cómo se puede transferir una cita a otra persona
-        - Se puede transferir las citas a un otro
-        - Se puede transferir citas a alguién
+        - cómo se puede transferir una cita a otra persona
+        - se puede transferir citas a alguién
+        - se puede transferir las citas a un otro
+        - son transferibles
 
   LateApptAppointmentsFAQLambdaPermissionEs:
     Type: AWS::Lambda::Permission
@@ -606,16 +601,15 @@ Resources:
               - UserQuestionFAQAnswerer
               - Arn
       sampleUtterances:
-        - Tiene que estar allí a la hora de la cita
+        - creo que voy a perder mi cita
+        - les importa si llego tarde
+        - llego tarde
+        - qué pasa si llego tarde
+        - qué pasa si me olvido mi cita
+        - se me hace tarde
+        - tiene que estar allí a la hora de la cita
+        - voy a llegar tarde
         - y si llegas tarde
-        - Qué pasa si llego tarde
-        - Se me hace tarde
-        - Voy a llegar tarde
-        - Qué pasa si me olvido mi cita
-        - Llego tarde
-        - Creo que voy a perder mi cita
-        - Les importa si llego tarde
-
 
   LeftoverAppointmentsFAQLambdaPermissionEs:
     Type: AWS::Lambda::Permission
@@ -645,27 +639,25 @@ Resources:
               - UserQuestionFAQAnswerer
               - Arn
       sampleUtterances:
-        - Hay vacunas que sobran
-        - Qué pasa si hay vacunas sobrantes
-        - Hay vacunas adicionales
-        - Qué pasa si hay más vacunas que sobren
-        - Que sucede cuando unas personas no asisten a sus citas
-        - Hay unas vacunas que sobraron
-        - Hay vacunas sobrantes
-        - Hay unas sobrantes
-        - Hay dosis sobrantes
-        - Que pasará si hay vacunas sobrantes
-        - Hay alguna dosis extra
-        - Qué pasa si hay más dosis sobrantes
-        - Hay unas doses que queden
-        - Hay más dosis sobrantes
-        - Hay restos de vacunas
-        - Qué pasa si hay vacunas sobrantes
-        - Hay algunas vacunas adicionales
-        - Que pasará si hay más restos de vacunas
-        - Hay una vacunas que sobraron
-        - Hay más vacunas sobrantes
-
+        - hay alguna dosis extra
+        - hay algunas vacunas adicionales
+        - hay dosis sobrantes
+        - hay más dosis sobrantes
+        - hay más vacunas sobrantes
+        - hay restos de vacunas
+        - hay una vacunas que sobraron
+        - hay unas doses que queden
+        - hay unas sobrantes
+        - hay unas vacunas que sobraron
+        - hay vacunas adicionales
+        - hay vacunas que sobran
+        - hay vacunas sobrantes
+        - que pasará si hay más restos de vacunas
+        - que pasará si hay vacunas sobrantes
+        - que sucede cuando unas personas no asisten a sus citas
+        - qué pasa si hay más dosis sobrantes
+        - qué pasa si hay más vacunas que sobren
+        - qué pasa si hay vacunas sobrantes
 
   SecondAppointmentsFAQLambdaPermissionEs:
     Type: AWS::Lambda::Permission
@@ -695,34 +687,33 @@ Resources:
               - UserQuestionFAQAnswerer
               - Arn
       sampleUtterances:
-        - Las citas para la segunda dosis son programadas durante la primera cita
-        - La segunda dosis está programada durante la primera cita
-        - Las segundas vacunas son programadas durante la primera cita
-        - Es la segunda esquema de vacunación programada durante la primera cita
-        - encontrar una segunda cita
-        - encontrar una segunda dosis
-        - encontrar una seguna vacuna
-        - encontrar una segunda vacuna
+        - cuando se la segunda dosis programadas
+        - cuando se programan segundo vacunas
+        - cuando se programen segunda dosis
+        - cuándo son programadas las segundas citas
+        - cómo reservar la segunda dosis
         - cómo reservar una segunda cita
         - cómo reservar una segunda dosis
-        - cómo reservar la segunda dosis
         - cómo reservar una segunda vacuna
+        - dónde puedo encontrar una segunda cita
+        - dónde puedo encontrar una segunda dosis
+        - dónde puedo encontrar una segunda vacuna
+        - encontrar una seguna vacuna
+        - encontrar una segunda cita
+        - encontrar una segunda dosis
+        - encontrar una segunda vacuna
+        - es la segunda esquema de vacunación programada durante la primera cita
+        - horario segunda cita
+        - la segunda dosis está programada durante la primera cita
+        - las citas para la segunda dosis son programadas durante la primera cita
+        - las segundas vacunas son programadas durante la primera cita
+        - programar la segunda dosis
+        - programar la segunda vacuna
+        - programar la vacuna segunda
         - programar una segunda cita
         - programar una segunda dosis
         - programar una segunda oportunidad
         - programar una segunda vacuna
-        - horario segunda cita
-        - programar la segunda dosis
-        - programar la segunda vacuna
-        - programar la vacuna segunda
-        - Cuándo son programadas las segundas citas
-        - cuando se la segunda dosis programadas
-        - Cuando se programen segunda dosis
-        - cuando se programan segundo vacunas
-        - Dónde puedo encontrar una segunda cita
-        - Dónde puedo encontrar una segunda dosis
-        - dónde puedo encontrar una segunda dosis
-        - dónde puedo encontrar una segunda vacuna
 
   DocumentationAppointmentsFAQLambdaPermissionEs:
     Type: AWS::Lambda::Permission
@@ -752,23 +743,22 @@ Resources:
               - UserQuestionFAQAnswerer
               - Arn
       sampleUtterances:
-        - No he recibido un correo electrónico
-        - No tengo la página de confirmación
+        - cómo puedo demostrar que soy elegible
+        - hay algo papeleo que debo llevar
         - hay que llenar formularios
-        - no recibi un correo electrónico
-        - Necesita su ID
+        - necesita su id
         - necesita su identificación
-        - Cómo puedo demostrar que soy elegible
-        - Hay algo papeleo que debo llevar
-        - Se requiere papeleo
-        - Qué documentación piden
-        - Qué documentos debo llevar
-        - Qué pruebas piden
-        - Qué prueba de mi estado piden
-        - Qué pruebas debo llevar
+        - no he recibido un correo electrónico
+        - no recibi un correo electrónico
+        - no tengo la página de confirmación
         - que deberia llevar
+        - qué documentación piden
+        - qué documentos debo llevar
         - qué me necesito para llevar
-
+        - qué prueba de mi estado piden
+        - qué pruebas debo llevar
+        - qué pruebas piden
+        - se requiere papeleo
 
   BookingAppointmentsFAQLambdaPermissionEs:
     Type: AWS::Lambda::Permission
@@ -798,18 +788,18 @@ Resources:
               - UserQuestionFAQAnswerer
               - Arn
       sampleUtterances:
-        - qué información requieren
-        - Cuál información requiren para reservar una cita
-        - Cuál información necesitan para que pueda registrarse para obtener una cita
-        - Cuál información es requirida cuando reservo una cita
-        - Qué información necesitas
-        - Qué información se necesita para que pueda reservar una cita
-        - Qué información se necesita para que pueda registrarse para obtener una cita
-        - Qué información se necesita cuando me reserva una cita
         - cuál es la información que necesita
-        - cuál es la información que necesita para que puedo reservar una cita
-        - cuál es la información que necesita para que pueda registrarse para obtener una cita
         - cuál es la información que necesita cuando me reservar una cita
+        - cuál es la información que necesita para que pueda registrarse para obtener una cita
+        - cuál es la información que necesita para que puedo reservar una cita
+        - cuál información es requirida cuando reservo una cita
+        - cuál información necesitan para que pueda registrarse para obtener una cita
+        - cuál información requiren para reservar una cita
+        - qué información necesitas
+        - qué información requieren
+        - qué información se necesita cuando me reserva una cita
+        - qué información se necesita para que pueda registrarse para obtener una cita
+        - qué información se necesita para que pueda reservar una cita
 
   NoFoundAppointmentsFAQLambdaPermissionEs:
     Type: AWS::Lambda::Permission
@@ -839,28 +829,28 @@ Resources:
               - UserQuestionFAQAnswerer
               - Arn
       sampleUtterances:
-        - Hay cualquier posibilidad de abrir las citas para mañana
-        - Hay cualquier posibilidad de apertura de las dosis para mañana
-        - cualquier posibilidad de abrir ranuras para mañana
+        - a qué hora presenten nuevas dosis
+        - a qué hora presenten nuevas ranuras
+        - a qué hora suele bajar de nuevas citas
+        - a qué hora suele bajar de vacunas
         - cualquier posibilidad de abrir puntos para mañana
+        - cualquier posibilidad de abrir ranuras para mañana
         - cualquier posibilidad de apertura de las vacunas para mañana
+        - cuál es el tiempo en que generalmente presenten nueva disponibilidad
+        - cuándo habrá más dosis
+        - cuándo habrá más nombramientos
+        - cuándo habrá más ranuras
+        - cuándo habrá más vacunas
+        - hay alguna cita disponible
+        - hay alguna dosis disponibles
+        - hay alguna ranuras disponibles
+        - hay alguna vacuna disponible
+        - hay cualquier posibilidad de abrir las citas para mañana
+        - hay cualquier posibilidad de apertura de las dosis para mañana
         - sabe cuándo será mayor disponibilidad
         - sabe cuándo será más dosis
         - sabe cuándo será más ranuras
         - sabe cuándo será más vacunas
-        - hay alguna cita disponible
-        - hay alguna dosis disponibles
-        - Hay alguna ranuras disponibles
-        - Hay alguna vacuna disponible
-        - A qué hora suele bajar de nuevas citas
-        - Cuál es el tiempo en que generalmente presenten nueva disponibilidad
-        - A qué hora presenten nuevas dosis
-        - A qué hora presenten nuevas ranuras
-        - A qué hora suele bajar de vacunas
-        - cuándo habrá más nombramientos
-        - cuándo habrá más dosis
-        - cuándo habrá más ranuras
-        - cuándo habrá más vacunas
 
   #ENGLISH
 

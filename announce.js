@@ -202,16 +202,16 @@ const thyself = async () => {
       ]
     }
     await Axios.post(SLACK_API, announcement, config)
-    await Axios.post(SLACK_API, {
-      channel,
-      blocks: [
-        {
-          type: 'image',
-          image_url: 'https://s3.amazonaws.com/07bad1ce-5fe6-449f-9e1c-52cd6d38ee6f/vaxxie.gif',
-          alt_text: 'imagen animada de Vaxxie, usado en mensajes directos en Slack'
-        }
-      ]
-    }, config)
+    // return await Axios.post(SLACK_API, {
+    //   channel,
+    //   blocks: [
+    //     {
+    //       type: 'image',
+    //       image_url: 'https://s3.amazonaws.com/07bad1ce-5fe6-449f-9e1c-52cd6d38ee6f/vaxxie.gif',
+    //       alt_text: 'imagen animada de Vaxxie, usado en mensajes directos en Slack'
+    //     }
+    //   ]
+    // }, config)
   }
 
   await announceEn()

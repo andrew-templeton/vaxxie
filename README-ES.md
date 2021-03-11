@@ -116,7 +116,7 @@ Este es mi usuario personal con Vaxxie, en forma completa, para demostrar que no
 
 ### Créditos
 
- - Yo, Andrew Templeton ([LinkedIn](https://www.linkedin.com/in/andrew-templeton-22883a23/), [Twitter](https://twitter.com/ayetempleton) y [soy contratación!](https://www.indeed.com/cmp/CSC-Generation/jobs))
+ - Yo, Andrew Templeton ([LinkedIn](https://www.linkedin.com/in/andrew-templeton-22883a23/), [Twitter](https://twitter.com/ayetempleton) y [estoy contratando!](https://www.indeed.com/cmp/CSC-Generation/jobs))
  - [Andy Yiu](https://www.linkedin.com/in/andyyiu/) Modelo de idioma de preguntas frecuentes y conjunto de respuestas de Vaxxie para las preguntas de los usuarios
  - [Trevor Hedley](https://github.com/codeisafourletter) Ayudó con el modelo de lenguaje para "encontrarme una vacuna" por código postal.
  - [Vaccine Spotter API](https://www.vaccinespotter.org/) * Uso intensivo * de sus datos para impulsar las visitas de Vaxxie. No estoy afiliado pero los amo * mucho *.

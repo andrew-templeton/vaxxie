@@ -7,6 +7,12 @@
       "userId": {
         "type": "keyword"
       },
+      "lang": {
+        "type": "keyword"
+      },
+      "language": {
+        "type": "keyword"
+      },
       "queries": {
         "type": "nested",
         "properties": {

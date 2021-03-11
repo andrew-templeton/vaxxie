@@ -3,10 +3,18 @@
   "required": [
     "userId",
     "queries",
-    "createdAt"
+    "createdAt",
+    "lang"
   ],
   "additionalProperties": false,
   "properties": {
+    "lang": {
+      "type": "string",
+      "enum": [
+        "en",
+        "es"
+      ]
+    },
     "userId": {
       "type": "string"
     },

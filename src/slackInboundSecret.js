@@ -13,11 +13,11 @@ module.exports = async () => {
   }
   if (secretPromise) {
     const { SecretString } = await secretPromise
-    token = JSON.parse(SecretString).token
+    token = JSON.parse(SecretString)
     return token
   }
   secretPromise = SecretsManager.getSecretValue({ SecretId }).promise()
   const { SecretString } = await secretPromise
-  token = JSON.parse(SecretString).token
+  token = JSON.parse(SecretString)
   return token
 }

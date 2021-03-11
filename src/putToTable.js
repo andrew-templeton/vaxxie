@@ -52,38 +52,43 @@ module.exports = {
   BatchPutSlotsToTable: batchPutter({ TableName: SLOTS_TABLE, schema: SlotsDynamoSchema }),
   PutToSlotsTable: putter({ TableName: SLOTS_TABLE, schema: SlotsDynamoSchema }),
   PutToPreferencesTable: putter({ TableName: PREFERENCES_TABLE, schema: PreferencesDynamoSchema }),
-  AppendQueryToPreferences: async ({ userId, query }) => {
+  AppendQueryToPreferences: async ({ userId, query, lang }) => {
     const { valid, errors } = Validate(query, QuerySchema)
     if (!valid) {
       return [errors]
     }
-    return await (Maybe(async ({ query, userId }) => await (DynamoDB.update({
+    return await (Maybe(async ({ query, userId, lang }) => await (DynamoDB.update({
       TableName: PREFERENCES_TABLE,
       Key: { userId },
-      UpdateExpression: 'SET queries = list_append(queries, :q)',
+      UpdateExpression: 'SET queries = list_append(queries, :q), lang = :l',
       ExpressionAttributeValues: {
-        ':q': [query]
+        ':q': [query],
+        ':l': lang
       }
-    }).promise()))({ query, userId }))
+    }).promise()))({ query, userId, lang }))
   },
-  ReplaceQueryInPreferences: async ({ index, userId, query }) => {
+  ReplaceQueryInPreferences: async ({ index, userId, query, lang }) => {
     const { valid, errors } = Validate(query, QuerySchema)
     if (!valid) {
       return [errors]
     }
-    return await (Maybe(async ({ query, userId, index }) => await (DynamoDB.update({
+    return await (Maybe(async ({ query, userId, index, lang }) => await (DynamoDB.update({
       TableName: PREFERENCES_TABLE,
       Key: { userId },
       // making sure it's an int, prevents injection attacks
-      UpdateExpression: `SET queries[${parseInt(index).toString()}] = :q`,
+      UpdateExpression: `SET queries[${parseInt(index).toString()}] = :q, lang = :l`,
       ExpressionAttributeValues: {
-        ':q': query
+        ':q': query,
+        ':l': lang
       }
-    }).promise()))({ query, userId, index }))
+    }).promise()))({ query, userId, index, lang }))
   },
-  RemoveQueryByIndex: async ({ index, userId }) => await (Maybe(async ({ userId, index }) => await (DynamoDB.update({
+  RemoveQueryByIndex: async ({ index, userId, lang }) => await (Maybe(async ({ userId, index, lang }) => await (DynamoDB.update({
     TableName: PREFERENCES_TABLE,
     Key: { userId },
-    UpdateExpression: `REMOVE queries[${parseInt(index).toString()}]`
-  }).promise()))({ userId, index }))
+    UpdateExpression: `REMOVE queries[${parseInt(index).toString()}] SET lang = :l`,
+    ExpressionAttributeValues: {
+      ':l': lang
+    }
+  }).promise()))({ userId, index, lang }))
 }

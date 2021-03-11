@@ -5,11 +5,19 @@
     "id",
     "userId",
     "queries",
-    "createdAt"
+    "createdAt",
+    "lang"
   ],
   "properties": {
     "id": {
       "type": "string"
+    },
+    "lang": {
+      "type": "string",
+      "enum": [
+        "en",
+        "es"
+      ]
     },
     "userId": {
       "type": "string"

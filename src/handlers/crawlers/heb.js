@@ -68,10 +68,12 @@ const heb = async event => {
   console.log('For insert:')
   console.log('%j', insertables)
 
-  const results = await BatchPutSlotsToTable(insertables)
+  console.log('DID NOT INSERT!!')
 
-  console.log('Batching results: ')
-  console.log('%j', results)
+  // const results = await BatchPutSlotsToTable(insertables)
+  //
+  // console.log('Batching results: ')
+  // console.log('%j', results)
 
   return 'ok'
 }

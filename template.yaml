@@ -43,13 +43,826 @@ Parameters:
   AnnouncementChannel:
     Type: String
     Default: C01L4DNQY8K
-  BotUserId:
+  BotUserIdEn:
+    Type: String
+    Default: U01PEHYJ8ET
+  BotUserIdEs:
     Type: String
     Default: U01PEHYJ8ET
 Resources:
 
   SecretForSlackKey:
     Type: AWS::SecretsManager::Secret
+
+
+
+  ### SPANISH
+
+  VaccineBotEs:
+    Type: 'Custom::LexBot'
+    Properties:
+      ServiceToken:
+        'Fn::ImportValue': cfn-lex-bot-1-0-3-ServiceToken
+      name:
+        'Fn::Sub': '${Namespace}${BotName}Es'
+      abortStatement:
+        messages:
+          - content: 'Lo siento, pero no puedo entender lo que acaba de decir. La forma principal de utilizarme es preguntar: Encuéntrame una vacuna. Si desea saber más sobre este bot, diríjase a https://github.com/andrew-templeton/vaxxie/blob/master/README-ES.md, o si desea saber más sobre las Vaccine Updates Texas (Actualizaciones de Vacunas de Texas), ¡vaya aquí! https://www.notion.so/General-FAQ-cdcb7fa2d55c4179bf94efab1665a40c'
+            contentType: PlainText
+      childDirected: true
+      clarificationPrompt:
+        maxAttempts: 1
+        messages:
+          - content: 'Lo siento, pero no puedo entender lo que acaba de decir. La forma principal de utilizarme es preguntar: Encuéntrame una vacuna. Si desea saber más sobre este bot, diríjase a https://github.com/andrew-templeton/vaxxie/blob/master/README-ES.md, o si desea saber más sobre las Vaccine Updates Texas (Actualizaciones de Vacunas de Texas), ¡vaya aquí! https://www.notion.so/General-FAQ-cdcb7fa2d55c4179bf94efab1665a40c'
+            contentType: PlainText
+      description:
+        Ref: BotDescription
+      idleSessionTTLInSeconds: 300
+      intents:
+        - intentName:
+            Ref: SearchForVaccineEs
+          intentVersion: $LATEST
+        # - intentName:
+        #     Ref: CancelAppointmentsFAQEs
+        #   intentVersion: $LATEST
+        # - intentName:
+        #     Ref: RescheduleAppointmentsFAQEs
+        #   intentVersion: $LATEST
+        # - intentName:
+        #     Ref: TransferAppointmentsFAQEs
+        #   intentVersion: $LATEST
+        # - intentName:
+        #     Ref: LateApptAppointmentsFAQEs
+        #   intentVersion: $LATEST
+        # - intentName:
+        #     Ref: LeftoverAppointmentsFAQEs
+        #   intentVersion: $LATEST
+        # - intentName:
+        #     Ref: SecondAppointmentsFAQEs
+        #   intentVersion: $LATEST
+        # - intentName:
+        #     Ref: DocumentationAppointmentsFAQEs
+        #   intentVersion: $LATEST
+        # - intentName:
+        #     Ref: BookingAppointmentsFAQEs
+        #   intentVersion: $LATEST
+        # - intentName:
+        #     Ref: NoFoundAppointmentsFAQEs
+        #   intentVersion: $LATEST
+        # - intentName:
+        #     Ref: ListVaccineSearchesEs
+        #   intentVersion: $LATEST
+        - intentName:
+            Ref: UpdateVaccineSearchEs
+          intentVersion: $LATEST
+        # - intentName:
+        #     Ref: RemoveVaccineSearchEs
+        #   intentVersion: $LATEST
+      locale: es-US
+      processBehavior: BUILD
+
+  VaccineLambdaLexPermissionEs:
+    Type: AWS::Lambda::Permission
+    Properties:
+      Action: lambda:InvokeFunction
+      FunctionName:
+        Ref: UserPreferencePersister
+      Principal: lex.amazonaws.com
+      SourceArn:
+        Fn::Sub: "arn:aws:lex:${AWS::Region}:${AWS::AccountId}:intent:${Namespace}SearchForVaccineEs:*"
+  SearchForVaccineEs:
+    DependsOn:
+      - VaccineLambdaLexPermissionEs
+    Type: 'Custom::LexIntent'
+    Properties:
+      ServiceToken:
+        'Fn::ImportValue': cfn-lex-intent-1-0-3-ServiceToken
+      name:
+        Fn::Sub: "${Namespace}SearchForVaccineEs"
+      confirmationPrompt:
+        maxAttempts: 1
+        messages:
+          - content: Debería comenzar a buscar citas cerca {Zipcode}, dentro {Distance} millas?
+            contentType: PlainText
+      description:
+        Ref: IntentDescription
+      fulfillmentActivity:
+        type: CodeHook
+        codeHook:
+          messageVersion: '1.0'
+          uri:
+            Fn::GetAtt:
+              - UserPreferencePersister
+              - Arn
+      rejectionStatement:
+        messages:
+          - content: 'Está bien, no voy a buscar esto'
+            contentType: PlainText
+          - content: 'Cancelé su búsqueda.'
+            contentType: PlainText
+      sampleUtterances:
+        - Encuentrame una vacuna
+        - Dónde puedo obtener una vacuna dentro {Distance} millas
+        - Encuentra citas dentro {Distance} millas de {Zipcode}
+        - Por favor ayúdame a encontrar una cita
+        - Por favor ayúdame a encontrar una vacuna
+        - Quiero una cita
+        - Encontrar una vacuna en {Zipcode}
+        - Necesito encontrar una vacuna de dos dosis dentro {Distance} millas de código postal {Zipcode}
+        - Necesito encontrar una vacuna dentro {Distance} millas de código postal {Zipcode}
+        - encontrar otra vacuna
+        - añadir una nueva búsqueda
+        - buscar en otro lugar
+        - buscar en una nueva zona
+        - encontrar una vacuna en una nueva zona
+        - encontrar una nueva vacuna para mi
+        - Quiero establecer una nueva búsqueda
+        - Quiero mirar en otro sitio
+        - buscar en otra parte
+      slots:
+        - name: Distance
+          description: The distance in miles to allow notifications
+          priority: 1
+          sampleUtterances:
+            - No más de {Distance}
+            - No más de {Distance} millas
+            - Podría viajar hasta {Distance} millas
+            - Podría viajar hasta {Distance}
+            - Puedo ir {Distance} millas
+            - Dentro de {Distance}
+            - Dentro de {Distance} por favor
+          slotConstraint: Required
+          slotType: AMAZON.NUMBER
+          valueElicitationPrompt:
+            maxAttempts: 1
+            messages:
+              - content: ¿A qué distancia está bien para obtener una vacuna, en millas?
+                contentType: PlainText
+              - content: ¿Qué tan lejos está dispuesto a viajar, en millas, a una cita?
+                contentType: PlainText
+              - content: Cuanto mayor sea el área que está dispuesto a ir, mejor. ¿Cuántas millas debería buscar?
+                contentType: PlainText
+        - name: Zipcode
+          description: The zip code of the search origin
+          priority: 2
+          sampleUtterances:
+            - Código postal {Zipcode}
+            - Mi código postal es {Zipcode}
+            - Vivo en {Zipcode}
+            - Comenzar búsqueda en {Zipcode}
+            - Buscar en {Zipcode}
+            - Cerca del codigo {Zipcode}
+          slotConstraint: Required
+          slotType: AMAZON.NUMBER
+          valueElicitationPrompt:
+            maxAttempts: 1
+            messages:
+              - content: ¿Cuál es el código postal de que le gustaría que empiece su búsqueda?
+                contentType: PlainText
+              - content: ¿Cuál es su código postal?
+                contentType: PlainText
+
+  SearchEditLexPermissionEs:
+    Type: AWS::Lambda::Permission
+    Properties:
+      Action: lambda:InvokeFunction
+      FunctionName:
+        Ref: UserPreferenceUpdater
+      Principal: lex.amazonaws.com
+      SourceArn:
+        Fn::Sub: "arn:aws:lex:${AWS::Region}:${AWS::AccountId}:intent:${Namespace}UpdateVaccineSearchEs:*"
+  UpdateVaccineSearchEs:
+    DependsOn:
+      - SearchEditLexPermissionEs
+    Type: 'Custom::LexIntent'
+    Properties:
+      ServiceToken:
+        'Fn::ImportValue': cfn-lex-intent-1-0-4-ServiceToken
+      name:
+        Fn::Sub: "${Namespace}UpdateVaccineSearchEs"
+      confirmationPrompt:
+        maxAttempts: 1
+        messages:
+          - content: ¿Debo reemplazar número de búsqueda {Searchnumber} para las citas cerca {Zipcode}, dentro de {Distance} millas?
+            contentType: PlainText
+      description: Allow the user to update an existing search
+      fulfillmentActivity:
+        type: CodeHook
+        codeHook:
+          messageVersion: '1.0'
+          uri:
+            Fn::GetAtt:
+              - UserPreferenceUpdater
+              - Arn
+      rejectionStatement:
+        messages:
+          - content: Está bien, no actualizaré su búsqueda.
+            contentType: PlainText
+          - content: Cancelé su cambio a la búsqueda.
+            contentType: PlainText
+      sampleUtterances:
+        - Cambia mi búsqueda
+        - Actualiza de mi búsqueda
+        - mira en otro lugar
+        - cambia mi búsqueda a {Distance} millas de {Zipcode}
+        - cambia mi búsqueda rápida para que {Distance} desde {Zipcode}
+        - Actualiza de la búsqueda a la que {Distance} millas de {Zipcode}
+        - Cambia mi búsqueda para ser {Distance} millas de {Zipcode}
+        - Actualiza de la búsqueda a la que {Distance} desde mi {Zipcode}
+        - altera mi búsqueda para ser {Distance} desde mi {Zipcode}
+        - Cambia la búsqueda a {Distance} millas
+        - Actualiza de la búsqueda a {Distance} millas
+        - Cambia mi búsqueda para ser {Distance} millas
+        - Cambia la búsqueda a ser en {Zipcode}
+        - Cambia mi búsqueda para estar en {Zipcode}
+        - Actualiza la búsqueda a estar en {Zipcode}
+        - Cambia mi búsqueda para estar cerca {Zipcode}
+        - altera mi búsqueda para estar cerca {Zipcode}
+        - Actualización de la búsqueda a estar cerca {Zipcode}
+        - Cambia la búsqueda {Searchnumber} a {Distance} millas de {Zipcode}
+        - Cambia búsqueda {Searchnumber} a {Distance} de {Zipcode}
+        - actualización de la búsqueda {Searchnumber} que sea {Distance} millas de {Zipcode}
+        - Cambia la búsqueda a ser {Searchnumber} {Distance} de {Zipcode}
+        - actualiza de la búsqueda {Searchnumber} sea {Distance} desde mi {Zipcode}
+        - Cambia la búsqueda {Searchnumber} sea {Distance} desde mi {Zipcode}
+
+      slots:
+        - name: Searchnumber
+          description: The one-indexed index of the search to edit
+          priority: 1
+          sampleUtterances:
+            - Reemplazar número {Searchnumber} por favor
+            - Sustituir {Searchnumber}
+            - "{Searchnumber} por favor"
+            - la {Searchnumber}
+            - el {Searchnumber} por favor
+          slotConstraint: Required
+          slotType: AMAZON.NUMBER
+          valueElicitationPrompt:
+            maxAttempts: 1
+            messages:
+              - content: '¿Cuál de búsqueda que desea reemplazar? Cuando la lista de las búsquedas aparecen tienen una etiqueta como 1 o 2 al lado de ellos. Usted debe decirme qué número se trata. Si necesita ver los números de nuevo, me re-preguntar por su lista de búsquedas actuales. Si sólo alguna vez me pidió que mirara en un solo lugar, sólo decir 1. Gracias!'
+                contentType: PlainText
+        - name: Distance
+          description: The distance in miles to allow notifications
+          priority: 2
+          sampleUtterances:
+            - No más de {Distance}
+            - No más de {Distance} millas
+            - Podría viajar hasta {Distance} millas
+            - Podría viajar hasta {Distance}
+            - Puedo ir {Distance} millas
+            - Dentro de {Distance}
+            - Dentro de {Distance} por favor
+          slotConstraint: Required
+          slotType: AMAZON.NUMBER
+          valueElicitationPrompt:
+            maxAttempts: 1
+            messages:
+              - content: ¿A qué distancia está bien para obtener una vacuna, en millas, para la búsqueda actualizada?
+                contentType: PlainText
+              - content: ¿Hasta dónde estás dispuesto a viajar, en millas, a una cita, para esta búsqueda actualizada?
+                contentType: PlainText
+              - content: Cuanto más grande es el área que está dispuesto a ir, mejor. ¿Cuántas millas debería buscar esta búsqueda actualizada?
+                contentType: PlainText
+        - name: Zipcode
+          description: The zip code of the search origin
+          priority: 3
+          sampleUtterances:
+            - Código postal {Zipcode}
+            - Mi código postal es {Zipcode}
+            - Vivo en {Zipcode}
+            - Comenzar búsqueda en {Zipcode}
+            - Buscar en {Zipcode}
+            - Cerca del codigo {Zipcode}
+          slotConstraint: Required
+          slotType: AMAZON.NUMBER
+          valueElicitationPrompt:
+            maxAttempts: 1
+            messages:
+              - content: ¿Cuál es el código postal que le gustaría que empiece su búsqueda actualizada de?
+                contentType: PlainText
+              - content: ¿Cuál es su código postal a utilizar para la búsqueda actualizada?
+                contentType: PlainText
+
+  SearchRemoveLexPermissionEs:
+    Type: AWS::Lambda::Permission
+    Properties:
+      Action: lambda:InvokeFunction
+      FunctionName:
+        Ref: UserPreferenceRemover
+      Principal: lex.amazonaws.com
+      SourceArn:
+        Fn::Sub: "arn:aws:lex:${AWS::Region}:${AWS::AccountId}:intent:${Namespace}RemoveVaccineSearchEs:*"
+  RemoveVaccineSearchEs:
+    DependsOn:
+      - SearchRemoveLexPermissionEs
+    Type: 'Custom::LexIntent'
+    Properties:
+      ServiceToken:
+        'Fn::ImportValue': cfn-lex-intent-1-0-4-ServiceToken
+      name:
+        Fn::Sub: "${Namespace}RemoveVaccineSearchEs"
+      confirmationPrompt:
+        maxAttempts: 1
+        messages:
+          - content: ¿Debo quitar número de búsqueda {Searchnumber}?
+            contentType: PlainText
+      description: Allow the user to remove an existing search
+      fulfillmentActivity:
+        type: CodeHook
+        codeHook:
+          messageVersion: '1.0'
+          uri:
+            Fn::GetAtt:
+              - UserPreferenceRemover
+              - Arn
+      rejectionStatement:
+        messages:
+          - content: Está bien, no voy a actualizar su búsqueda.
+            contentType: PlainText
+          - content: Me cancelaron su cambio a su búsqueda.
+            contentType: PlainText
+      sampleUtterances:
+        - eliminar búsqueda {Searchnumber}
+        - eliminar mi búsqueda {Searchnumber}
+        - borrar búsqueda {Searchnumber}
+        - eliminar mi búsqueda {Searchnumber}
+        - eliminar mi búsqueda
+        - deja de buscar
+        - Parar la búsqueda
+        - detener mi búsqueda
+        - parar la búsqueda
+        - eliminar mi búsqueda
+        - quitar una de estas búsquedas
+        - borrar una de estas búsquedas
+        - Quiero eliminar una de mis búsquedas
+        - Quiero borrar una de mis búsquedas
+        - por favor borra una búsqueda
+        - parar la búsqueda en uno de estos lugares
+      slots:
+        - name: Searchnumber
+          description: The one-indexed index of the search to edit
+          priority: 1
+          sampleUtterances:
+            - Reemplazar número {Searchnumber} por favor
+            - Sustituir {Searchnumber}
+            - "{Searchnumber} por favor"
+            - la {Searchnumber}
+            - el {Searchnumber} por favor
+          slotConstraint: Required
+          slotType: AMAZON.NUMBER
+          valueElicitationPrompt:
+            maxAttempts: 1
+            messages:
+              - content: '¿Cuál búsqueda que desea eliminar? Cuando la lista de las búsquedas, que tienen una etiqueta como 1 o 2 al lado de ellos. Usted debe decirme de qué número se trata. Si necesita ver los números de nuevo, me re-preguntar a su lista de búsquedas actuales. Si sólo alguna vez me pidió que mirara en un solo lugar, sólo decir 1. Gracias!'
+                contentType: PlainText
+
+  SearchListLambdaLexPermissionEs:
+    Type: AWS::Lambda::Permission
+    Properties:
+      Action: lambda:InvokeFunction
+      FunctionName:
+        Ref: UserPreferenceLister
+      Principal: lex.amazonaws.com
+      SourceArn:
+        Fn::Sub: "arn:aws:lex:${AWS::Region}:${AWS::AccountId}:intent:${Namespace}ListVaccineSearchesEs:*"
+  ListVaccineSearchesEs:
+    DependsOn:
+      - SearchListLambdaLexPermissionEs
+    Type: 'Custom::LexIntent'
+    Properties:
+      ServiceToken:
+        'Fn::ImportValue': cfn-lex-intent-1-0-4-ServiceToken
+      name:
+        Fn::Sub: "${Namespace}ListVaccineSearchesEs"
+      description: "User indicates intent to inspect the existing searches"
+      fulfillmentActivity:
+        type: CodeHook
+        codeHook:
+          messageVersion: '1.0'
+          uri:
+            Fn::GetAtt:
+              - UserPreferenceLister
+              - Arn
+      sampleUtterances:
+        - Cuáles son mis búsquedas actuales
+        - donde está usted buscando en este momento
+        - Qué estás tratando de encontrar
+        - Cuál cosas he buscado anteriormente
+        - Dónde está buscando ahorita
+        - Qué estás buscando en este momento
+        - cuál era mi última búsqueda
+        - qué estás encontrando en este momento
+        - favor de hacer una lista de mis búsquedas
+        - mostrar mis búsquedas
+        - Muéstrame una lista de mis búsquedas
+        - Mostrar lo que estás buscando
+        - mostrar todas mis búsquedas
+        - mostrar todas las cosas que usted está buscando
+        - Dónde estas buscando
+        - muéstrame lo que está buscando
+        - me muestra todas sus búsquedas, por favor
+        - muestra todos los lugares que está buscando para mí
+        - donde está usted buscando vacunas para mí
+        - Cuáles son mis búsquedas
+        - Hágame una lista de todos los lugares que está buscando
+        - Lista de mis búsquedas
+
+  CancelAppointmentsFAQLambdaPermissionEs:
+    Type: AWS::Lambda::Permission
+    Properties:
+      Action: lambda:InvokeFunction
+      FunctionName:
+        Ref: UserQuestionFAQAnswerer
+      Principal: lex.amazonaws.com
+      SourceArn:
+        Fn::Sub: "arn:aws:lex:${AWS::Region}:${AWS::AccountId}:intent:${Namespace}CancelAppointmentsFAQEs:*"
+  CancelAppointmentsFAQEs:
+    DependsOn:
+      - CancelAppointmentsFAQLambdaPermissionEs
+    Type: 'Custom::LexIntent'
+    Properties:
+      ServiceToken:
+        'Fn::ImportValue': cfn-lex-intent-1-0-4-ServiceToken
+      name:
+        Fn::Sub: "${Namespace}CancelAppointmentsFAQEs"
+      description: "Allows the user to ask questions about how to cancel appointments"
+      fulfillmentActivity:
+        type: CodeHook
+        codeHook:
+          messageVersion: '1.0'
+          uri:
+            Fn::GetAtt:
+              - UserQuestionFAQAnswerer
+              - Arn
+      sampleUtterances:
+        - Cómo puedo cancelar
+        - No puedo hacer la cita
+        - Cómo se cancela
+        - Cómo canceló Ud.
+        - uno de mis vecinos no puede asistir a su cita
+        - Cómo cancelamos una cita
+        - Estoy tratando de cancelar
+        - necesito cancelar mi cita
+        - enlace para cancelar
+        - Hay un número para cancelar la cita
+        - Hay un correo electrónico para cancelar
+        - Alguien sabe cómo cancelar
+        - estoy intentando cancelar
+        - Cómo se canceló
+
+  RescheduleAppointmentsFAQLambdaPermissionEs:
+    Type: AWS::Lambda::Permission
+    Properties:
+      Action: lambda:InvokeFunction
+      FunctionName:
+        Ref: UserQuestionFAQAnswerer
+      Principal: lex.amazonaws.com
+      SourceArn:
+        Fn::Sub: "arn:aws:lex:${AWS::Region}:${AWS::AccountId}:intent:${Namespace}RescheduleAppointmentsFAQEs:*"
+  RescheduleAppointmentsFAQEs:
+    DependsOn:
+      - RescheduleAppointmentsFAQLambdaPermissionEs
+    Type: 'Custom::LexIntent'
+    Properties:
+      ServiceToken:
+        'Fn::ImportValue': cfn-lex-intent-1-0-4-ServiceToken
+      name:
+        Fn::Sub: "${Namespace}RescheduleAppointmentsFAQEs"
+      description: "Allows the user to ask questions about how to reschedule appointments"
+      fulfillmentActivity:
+        type: CodeHook
+        codeHook:
+          messageVersion: '1.0'
+          uri:
+            Fn::GetAtt:
+              - UserQuestionFAQAnswerer
+              - Arn
+      sampleUtterances:
+        - Se puede reprogramar citas
+        - Cómo reprogramar
+        - Cómo se reprograma
+        - Cómo puedo cambiar la fecha
+
+  TransferAppointmentsFAQLambdaPermissionEs:
+    Type: AWS::Lambda::Permission
+    Properties:
+      Action: lambda:InvokeFunction
+      FunctionName:
+        Ref: UserQuestionFAQAnswerer
+      Principal: lex.amazonaws.com
+      SourceArn:
+        Fn::Sub: "arn:aws:lex:${AWS::Region}:${AWS::AccountId}:intent:${Namespace}TransferAppointmentsFAQEs:*"
+  TransferAppointmentsFAQEs:
+    DependsOn:
+      - TransferAppointmentsFAQLambdaPermissionEs
+    Type: 'Custom::LexIntent'
+    Properties:
+      ServiceToken:
+        'Fn::ImportValue': cfn-lex-intent-1-0-4-ServiceToken
+      name:
+        Fn::Sub: "${Namespace}TransferAppointmentsFAQEs"
+      description: "Allows the user to ask questions about how to transfer appointments"
+      fulfillmentActivity:
+        type: CodeHook
+        codeHook:
+          messageVersion: '1.0'
+          uri:
+            Fn::GetAtt:
+              - UserQuestionFAQAnswerer
+              - Arn
+      sampleUtterances:
+        - Son transferibles
+        - Cómo se puede transferir una cita a otra persona
+        - Se puede transferir las citas a un otro
+        - Se puede transferir citas a alguién
+
+  LateApptAppointmentsFAQLambdaPermissionEs:
+    Type: AWS::Lambda::Permission
+    Properties:
+      Action: lambda:InvokeFunction
+      FunctionName:
+        Ref: UserQuestionFAQAnswerer
+      Principal: lex.amazonaws.com
+      SourceArn:
+        Fn::Sub: "arn:aws:lex:${AWS::Region}:${AWS::AccountId}:intent:${Namespace}LateApptAppointmentsFAQEs:*"
+  LateApptAppointmentsFAQEs:
+    DependsOn:
+      - LateApptAppointmentsFAQLambdaPermissionEs
+    Type: 'Custom::LexIntent'
+    Properties:
+      ServiceToken:
+        'Fn::ImportValue': cfn-lex-intent-1-0-4-ServiceToken
+      name:
+        Fn::Sub: "${Namespace}LateApptAppointmentsFAQEs"
+      description: "Allows the user to ask questions about how to transfer appointments"
+      fulfillmentActivity:
+        type: CodeHook
+        codeHook:
+          messageVersion: '1.0'
+          uri:
+            Fn::GetAtt:
+              - UserQuestionFAQAnswerer
+              - Arn
+      sampleUtterances:
+        - Tiene que estar allí a la hora de la cita
+        - y si llegas tarde
+        - Qué pasa si llego tarde
+        - Se me hace tarde
+        - Voy a llegar tarde
+        - Qué pasa si me olvido mi cita
+        - Llego tarde
+        - Creo que voy a perder mi cita
+        - Les importa si llego tarde
+
+
+  LeftoverAppointmentsFAQLambdaPermissionEs:
+    Type: AWS::Lambda::Permission
+    Properties:
+      Action: lambda:InvokeFunction
+      FunctionName:
+        Ref: UserQuestionFAQAnswerer
+      Principal: lex.amazonaws.com
+      SourceArn:
+        Fn::Sub: "arn:aws:lex:${AWS::Region}:${AWS::AccountId}:intent:${Namespace}LeftoverAppointmentsFAQEs:*"
+  LeftoverAppointmentsFAQEs:
+    DependsOn:
+      - LeftoverAppointmentsFAQLambdaPermissionEs
+    Type: 'Custom::LexIntent'
+    Properties:
+      ServiceToken:
+        'Fn::ImportValue': cfn-lex-intent-1-0-4-ServiceToken
+      name:
+        Fn::Sub: "${Namespace}LeftoverAppointmentsFAQEs"
+      description: "Allows the user to ask questions about how to transfer appointments"
+      fulfillmentActivity:
+        type: CodeHook
+        codeHook:
+          messageVersion: '1.0'
+          uri:
+            Fn::GetAtt:
+              - UserQuestionFAQAnswerer
+              - Arn
+      sampleUtterances:
+        - Hay vacunas que sobran
+        - Qué pasa si hay vacunas sobrantes
+        - Hay vacunas adicionales
+        - Qué pasa si hay más vacunas que sobren
+        - Que sucede cuando unas personas no asisten a sus citas
+        - Hay unas vacunas que sobraron
+        - Hay vacunas sobrantes
+        - Hay unas sobrantes
+        - Hay dosis sobrantes
+        - Que pasará si hay vacunas sobrantes
+        - Hay alguna dosis extra
+        - Qué pasa si hay más dosis sobrantes
+        - Hay unas doses que queden
+        - Hay más dosis sobrantes
+        - Hay restos de vacunas
+        - Qué pasa si hay vacunas sobrantes
+        - Hay algunas vacunas adicionales
+        - Que pasará si hay más restos de vacunas
+        - Hay una vacunas que sobraron
+        - Hay más vacunas sobrantes
+
+
+  SecondAppointmentsFAQLambdaPermissionEs:
+    Type: AWS::Lambda::Permission
+    Properties:
+      Action: lambda:InvokeFunction
+      FunctionName:
+        Ref: UserQuestionFAQAnswerer
+      Principal: lex.amazonaws.com
+      SourceArn:
+        Fn::Sub: "arn:aws:lex:${AWS::Region}:${AWS::AccountId}:intent:${Namespace}SecondAppointmentsFAQEs:*"
+  SecondAppointmentsFAQEs:
+    DependsOn:
+      - SecondAppointmentsFAQLambdaPermissionEs
+    Type: 'Custom::LexIntent'
+    Properties:
+      ServiceToken:
+        'Fn::ImportValue': cfn-lex-intent-1-0-4-ServiceToken
+      name:
+        Fn::Sub: "${Namespace}SecondAppointmentsFAQEs"
+      description: "Allows the user to ask questions about how to get second appointments"
+      fulfillmentActivity:
+        type: CodeHook
+        codeHook:
+          messageVersion: '1.0'
+          uri:
+            Fn::GetAtt:
+              - UserQuestionFAQAnswerer
+              - Arn
+      sampleUtterances:
+        - Las citas para la segunda dosis son programadas durante la primera cita
+        - La segunda dosis está programada durante la primera cita
+        - Las segundas vacunas son programadas durante la primera cita
+        - Es la segunda esquema de vacunación programada durante la primera cita
+        - encontrar una segunda cita
+        - encontrar una segunda dosis
+        - encontrar una seguna vacuna
+        - encontrar una segunda vacuna
+        - cómo reservar una segunda cita
+        - cómo reservar una segunda dosis
+        - cómo reservar la segunda dosis
+        - cómo reservar una segunda vacuna
+        - programar una segunda cita
+        - programar una segunda dosis
+        - programar una segunda oportunidad
+        - programar una segunda vacuna
+        - horario segunda cita
+        - programar la segunda dosis
+        - programar la segunda vacuna
+        - programar la vacuna segunda
+        - Cuándo son programadas las segundas citas
+        - cuando se la segunda dosis programadas
+        - Cuando se programen segunda dosis
+        - cuando se programan segundo vacunas
+        - Dónde puedo encontrar una segunda cita
+        - Dónde puedo encontrar una segunda dosis
+        - dónde puedo encontrar una segunda dosis
+        - dónde puedo encontrar una segunda vacuna
+
+  DocumentationAppointmentsFAQLambdaPermissionEs:
+    Type: AWS::Lambda::Permission
+    Properties:
+      Action: lambda:InvokeFunction
+      FunctionName:
+        Ref: UserQuestionFAQAnswerer
+      Principal: lex.amazonaws.com
+      SourceArn:
+        Fn::Sub: "arn:aws:lex:${AWS::Region}:${AWS::AccountId}:intent:${Namespace}DocumentationAppointmentsFAQEs:*"
+  DocumentationAppointmentsFAQEs:
+    DependsOn:
+      - DocumentationAppointmentsFAQLambdaPermissionEs
+    Type: 'Custom::LexIntent'
+    Properties:
+      ServiceToken:
+        'Fn::ImportValue': cfn-lex-intent-1-0-4-ServiceToken
+      name:
+        Fn::Sub: "${Namespace}DocumentationAppointmentsFAQEs"
+      description: "Allows the user to ask questions about what documentation to bring to appointments"
+      fulfillmentActivity:
+        type: CodeHook
+        codeHook:
+          messageVersion: '1.0'
+          uri:
+            Fn::GetAtt:
+              - UserQuestionFAQAnswerer
+              - Arn
+      sampleUtterances:
+        - No he recibido un correo electrónico
+        - No tengo la página de confirmación
+        - hay que llenar formularios
+        - no recibi un correo electrónico
+        - Necesita su ID
+        - necesita su identificación
+        - Cómo puedo demostrar que soy elegible
+        - Hay algo papeleo que debo llevar
+        - Se requiere papeleo
+        - Qué documentación piden
+        - Qué documentos debo llevar
+        - Qué pruebas piden
+        - Qué prueba de mi estado piden
+        - Qué pruebas debo llevar
+        - que deberia llevar
+        - qué me necesito para llevar
+
+
+  BookingAppointmentsFAQLambdaPermissionEs:
+    Type: AWS::Lambda::Permission
+    Properties:
+      Action: lambda:InvokeFunction
+      FunctionName:
+        Ref: UserQuestionFAQAnswerer
+      Principal: lex.amazonaws.com
+      SourceArn:
+        Fn::Sub: "arn:aws:lex:${AWS::Region}:${AWS::AccountId}:intent:${Namespace}BookingAppointmentsFAQEs:*"
+  BookingAppointmentsFAQEs:
+    DependsOn:
+      - BookingAppointmentsFAQLambdaPermissionEs
+    Type: 'Custom::LexIntent'
+    Properties:
+      ServiceToken:
+        'Fn::ImportValue': cfn-lex-intent-1-0-4-ServiceToken
+      name:
+        Fn::Sub: "${Namespace}BookingAppointmentsFAQEs"
+      description: "Allows the user to ask questions about what documentation to have when booking appointments"
+      fulfillmentActivity:
+        type: CodeHook
+        codeHook:
+          messageVersion: '1.0'
+          uri:
+            Fn::GetAtt:
+              - UserQuestionFAQAnswerer
+              - Arn
+      sampleUtterances:
+        - qué información requieren
+        - Cuál información requiren para reservar una cita
+        - Cuál información necesitan para que pueda registrarse para obtener una cita
+        - Cuál información es requirida cuando reservo una cita
+        - Qué información necesitas
+        - Qué información se necesita para que pueda reservar una cita
+        - Qué información se necesita para que pueda registrarse para obtener una cita
+        - Qué información se necesita cuando me reserva una cita
+        - cuál es la información que necesita
+        - cuál es la información que necesita para que puedo reservar una cita
+        - cuál es la información que necesita para que pueda registrarse para obtener una cita
+        - cuál es la información que necesita cuando me reservar una cita
+
+  NoFoundAppointmentsFAQLambdaPermissionEs:
+    Type: AWS::Lambda::Permission
+    Properties:
+      Action: lambda:InvokeFunction
+      FunctionName:
+        Ref: UserQuestionFAQAnswerer
+      Principal: lex.amazonaws.com
+      SourceArn:
+        Fn::Sub: "arn:aws:lex:${AWS::Region}:${AWS::AccountId}:intent:${Namespace}NoFoundAppointmentsFAQEs:*"
+  NoFoundAppointmentsFAQEs:
+    DependsOn:
+      - NoFoundAppointmentsFAQLambdaPermissionEs
+    Type: 'Custom::LexIntent'
+    Properties:
+      ServiceToken:
+        'Fn::ImportValue': cfn-lex-intent-1-0-4-ServiceToken
+      name:
+        Fn::Sub: "${Namespace}NoFoundAppointmentsFAQEs"
+      description: "Allows the user to ask questions about where the heck are the appointments"
+      fulfillmentActivity:
+        type: CodeHook
+        codeHook:
+          messageVersion: '1.0'
+          uri:
+            Fn::GetAtt:
+              - UserQuestionFAQAnswerer
+              - Arn
+      sampleUtterances:
+        - Hay cualquier posibilidad de abrir las citas para mañana
+        - Hay cualquier posibilidad de apertura de las dosis para mañana
+        - cualquier posibilidad de abrir ranuras para mañana
+        - cualquier posibilidad de abrir puntos para mañana
+        - cualquier posibilidad de apertura de las vacunas para mañana
+        - sabe cuándo será mayor disponibilidad
+        - sabe cuándo será más dosis
+        - sabe cuándo será más ranuras
+        - sabe cuándo será más vacunas
+        - hay alguna cita disponible
+        - hay alguna dosis disponibles
+        - Hay alguna ranuras disponibles
+        - Hay alguna vacuna disponible
+        - A qué hora suele bajar de nuevas citas
+        - Cuál es el tiempo en que generalmente presenten nueva disponibilidad
+        - A qué hora presenten nuevas dosis
+        - A qué hora presenten nuevas ranuras
+        - A qué hora suele bajar de vacunas
+        - cuándo habrá más nombramientos
+        - cuándo habrá más dosis
+        - cuándo habrá más ranuras
+        - cuándo habrá más vacunas
+
+  #ENGLISH
 
   VaccineLambdaLexPermission:
     Type: AWS::Lambda::Permission
@@ -798,7 +1611,6 @@ Resources:
 
 
 
-
   VaccineBot:
     Type: 'Custom::LexBot'
     DependsOn:
@@ -1078,8 +1890,12 @@ Resources:
           SLOTS_INDEX: slots
           SLACK_SECRET:
             Ref: SecretForSlackKey
-          BOT_USER_ID:
-            Ref: BotUserId
+          BOT_USER_ID_EN:
+            Ref: BotUserIdEn
+          BOT_USER_ID_ES:
+            Ref: BotUserIdEs
+          BOT_GROUP_IDENTIFIER:
+            Fn::Sub: "${Namespace}${BotName}"
       VpcConfig:
         SecurityGroupIds:
           - Ref: ElasticsearchAccessorGroup
@@ -1171,8 +1987,10 @@ Resources:
             Ref: AnnouncementChannel
           SLACK_SECRET:
             Ref: SecretForSlackKey
-          BOT_USER_ID:
-            Ref: BotUserId
+          BOT_USER_ID_EN:
+            Ref: BotUserIdEn
+          BOT_USER_ID_ES:
+            Ref: BotUserIdEs
       Events:
         AnnounceEverySixHours:
           Type: Schedule
@@ -1222,7 +2040,7 @@ Resources:
         HebCollector:
           Type: Schedule
           Properties:
-            Enabled: false
+            Enabled: true
             Schedule: rate(1 minute)
   SlotsTable:
     Type: AWS::DynamoDB::Table

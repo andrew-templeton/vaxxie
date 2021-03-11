@@ -48,7 +48,7 @@ Parameters:
     Default: U01PEHYJ8ET
   BotUserIdEs:
     Type: String
-    Default: U01PEHYJ8ET
+    Default: U01QYKDKPGT
 Resources:
 
   SecretForSlackKey:

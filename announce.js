@@ -97,7 +97,17 @@ const thyself = async () => {
       }
     ]
   }
-  await Axios.post(SLACK_API, announcement, config)
+  // await Axios.post(SLACK_API, announcement, config)
+  await Axios.post(SLACK_API, {
+    channel,
+    blocks: [
+      {
+        type: 'image',
+        image_url: 'https://s3.amazonaws.com/07bad1ce-5fe6-449f-9e1c-52cd6d38ee6f/vaxxie.gif',
+        alt_text: 'animated image of the Vaxxie bot being used in direct messages in Slack'
+      }
+    ]
+  }, config)
 }
 
 module.exports = {

@@ -1794,6 +1794,7 @@ Resources:
         SubnetIds:
           - Ref: PrivateSubnetAlpha
           - Ref: PrivateSubnetBravo
+          - Ref: PrivateSubnetCharlie
   PingCheckEs:
     Type: AWS::Serverless::Function
     Properties:
@@ -1814,6 +1815,7 @@ Resources:
         SubnetIds:
           - Ref: PrivateSubnetAlpha
           - Ref: PrivateSubnetBravo
+          - Ref: PrivateSubnetCharlie
   ExecuteOnEs:
     Type: AWS::Serverless::Function
     Properties:
@@ -1834,6 +1836,7 @@ Resources:
         SubnetIds:
           - Ref: PrivateSubnetAlpha
           - Ref: PrivateSubnetBravo
+          - Ref: PrivateSubnetCharlie
   NotificationsQueue:
     Type: AWS::SQS::Queue
     Properties:
@@ -1900,6 +1903,7 @@ Resources:
         SubnetIds:
           - Ref: PrivateSubnetAlpha
           - Ref: PrivateSubnetBravo
+          - Ref: PrivateSubnetCharlie
       Events:
         HandleNewSlots:
           Type: DynamoDB
@@ -1966,6 +1970,7 @@ Resources:
         SubnetIds:
           - Ref: PrivateSubnetAlpha
           - Ref: PrivateSubnetBravo
+          - Ref: PrivateSubnetCharlie
   NotificationsStreamHandler:
     Type: AWS::Serverless::Function
     Properties:

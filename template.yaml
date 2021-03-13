@@ -1831,6 +1831,14 @@ Resources:
         SubnetIds:
           - Ref: PrivateSubnetAlpha
           - Ref: PrivateSubnetBravo
+  NotificationsQueue:
+    Type: AWS::SQS::Queue
+    Properties:
+      VisibilityTimeout: 35
+      RedrivePolicy:
+        Fn::Sub: '{"deadLetterTargetArn": "${NotificationsQueueDLQ.Arn}", "maxReceiveCount": 3}'
+  NotificationsQueueDLQ:
+    Type: AWS::SQS::Queue
   SlotStreamHandler:
     Type: AWS::Serverless::Function
     Properties:
@@ -1846,9 +1854,11 @@ Resources:
               Action:
                 - cloudwatch:PutMetricData
               Resource: "*"
-        - AWSSecretsManagerGetSecretValuePolicy:
-            SecretArn:
-              Ref: SecretForSlackKey
+        - SQSSendMessagePolicy:
+            QueueName:
+              Fn::GetAtt:
+                - NotificationsQueue
+                - QueueName
         - DynamoDBCrudPolicy:
             TableName:
               Ref: SlotsTable
@@ -1878,14 +1888,9 @@ Resources:
             Ref: PreferenceTable
           PREFERENCES_INDEX: preferences
           SLOTS_INDEX: slots
-          SLACK_SECRET:
-            Ref: SecretForSlackKey
-          BOT_USER_ID_EN:
-            Ref: BotUserIdEn
-          BOT_USER_ID_ES:
-            Ref: BotUserIdEs
-          BOT_GROUP_IDENTIFIER:
-            Fn::Sub: "${Namespace}${BotName}"
+          NOTIFICATION_QUEUE_URL:
+            Ref: NotificationsQueue
+          HARD_SHUTOFF: "false"
       VpcConfig:
         SecurityGroupIds:
           - Ref: ElasticsearchAccessorGroup
@@ -1958,6 +1963,48 @@ Resources:
         SubnetIds:
           - Ref: PrivateSubnetAlpha
           - Ref: PrivateSubnetBravo
+  NotificationsStreamHandler:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: .
+      Runtime: nodejs12.x
+      Handler: streamers.slideIntoDms
+      MemorySize: 256
+      Timeout: 30
+      Policies:
+        - Version: '2012-10-17'
+          Statement:
+            - Effect: Allow
+              Action:
+                - cloudwatch:PutMetricData
+              Resource: "*"
+        - AWSSecretsManagerGetSecretValuePolicy:
+            SecretArn:
+              Ref: SecretForSlackKey
+        - SQSPollerPolicy:
+            QueueName:
+              Fn::GetAtt:
+                - NotificationsQueue
+                - QueueName
+      Environment:
+        Variables:
+          SLACK_SECRET:
+            Ref: SecretForSlackKey
+          BOT_USER_ID_EN:
+            Ref: BotUserIdEn
+          BOT_USER_ID_ES:
+            Ref: BotUserIdEs
+          BOT_GROUP_IDENTIFIER:
+            Fn::Sub: "${Namespace}${BotName}"
+      Events:
+        HandleNotifications:
+          Type: SQS
+          Properties:
+            Enabled: true
+            Queue:
+              Fn::GetAtt:
+                - NotificationsQueue
+                - Arn
 
   AnnounceThyselfHandler:
     Type: AWS::Serverless::Function

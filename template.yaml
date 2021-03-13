@@ -37,6 +37,9 @@ Parameters:
   AvailabilityZoneBravo:
     Type: String
     Default: us-east-1b
+  AvailabilityZoneCharlie:
+    Type: String
+    Default: us-east-1c
   DomainName:
     Type: String
     Default: test
@@ -2178,6 +2181,10 @@ Resources:
     Type: AWS::EC2::EIP
     Properties:
       Domain: vpc
+  GatewayAllocationCharlie:
+    Type: AWS::EC2::EIP
+    Properties:
+      Domain: vpc
 
   ### VPC Basic Setup
   Vpc:
@@ -2245,6 +2252,22 @@ Resources:
       VpcId:
         Ref: Vpc
     Type: AWS::EC2::Subnet
+  PrivateSubnetCharlie:
+    DependsOn:
+    - Vpc
+    - InternetGatewayAttachment
+    Properties:
+      AvailabilityZone:
+        Ref: AvailabilityZoneCharlie
+      CidrBlock:
+        Fn::Sub: 10.${VpcSecondOctet}.2.0/24
+      Tags:
+      - Key: Name
+        Value:
+          Fn::Sub: "${EnvironmentPrefix}-Subnet-Private-Charlie"
+      VpcId:
+        Ref: Vpc
+    Type: AWS::EC2::Subnet
   PublicSubnetAlpha:
     DependsOn:
     - Vpc
@@ -2277,6 +2300,22 @@ Resources:
       VpcId:
         Ref: Vpc
     Type: AWS::EC2::Subnet
+  PublicSubnetCharlie:
+    DependsOn:
+    - Vpc
+    - InternetGatewayAttachment
+    Properties:
+      AvailabilityZone:
+        Ref: AvailabilityZoneCharlie
+      CidrBlock:
+        Fn::Sub: 10.${VpcSecondOctet}.5.0/24
+      Tags:
+      - Key: Name
+        Value:
+          Fn::Sub: "${EnvironmentPrefix}-Subnet-Public-Charlie"
+      VpcId:
+        Ref: Vpc
+    Type: AWS::EC2::Subnet
 
   ### Generate empty route tables
   RouteTablePrivateAlpha:
@@ -2298,6 +2337,17 @@ Resources:
       - Key: Name
         Value:
           Fn::Sub: "${EnvironmentPrefix}-RTB-Private-Bravo"
+      VpcId:
+        Ref: Vpc
+    Type: AWS::EC2::RouteTable
+  RouteTablePrivateCharlie:
+    DependsOn:
+    - Vpc
+    Properties:
+      Tags:
+      - Key: Name
+        Value:
+          Fn::Sub: "${EnvironmentPrefix}-RTB-Private-Charlie"
       VpcId:
         Ref: Vpc
     Type: AWS::EC2::RouteTable
@@ -2325,6 +2375,18 @@ Resources:
       VpcId:
         Ref: Vpc
     Type: AWS::EC2::RouteTable
+  RouteTablePublicCharlie:
+    DependsOn:
+    - Vpc
+    - InternetGatewayAttachment
+    Properties:
+      Tags:
+      - Key: Name
+        Value:
+          Fn::Sub: "${EnvironmentPrefix}-RTB-Public-Charlie"
+      VpcId:
+        Ref: Vpc
+    Type: AWS::EC2::RouteTable
 
   ### Route public spaces to gateway
   PublicRouteToInternetGatewayAlpha:
@@ -2348,6 +2410,17 @@ Resources:
         Ref: InternetGateway
       RouteTableId:
         Ref: RouteTablePublicBravo
+    Type: AWS::EC2::Route
+  PublicRouteToInternetGatewayCharlie:
+    DependsOn:
+    - InternetGatewayAttachment
+    - RouteTablePublicCharlie
+    Properties:
+      DestinationCidrBlock: 0.0.0.0/0
+      GatewayId:
+        Ref: InternetGateway
+      RouteTableId:
+        Ref: RouteTablePublicCharlie
     Type: AWS::EC2::Route
 
   ### Generate NAT gateways
@@ -2381,6 +2454,21 @@ Resources:
       - Key: Name
         Value:
           Fn::Sub: "${EnvironmentPrefix}-NAT-Gateway-Bravo"
+  NatGatewayCharlie:
+    DependsOn:
+    - PublicSubnetCharlie
+    Type: AWS::EC2::NatGateway
+    Properties:
+      AllocationId:
+        Fn::GetAtt:
+          - GatewayAllocationCharlie
+          - AllocationId
+      SubnetId:
+        Ref: PublicSubnetCharlie
+      Tags:
+      - Key: Name
+        Value:
+          Fn::Sub: "${EnvironmentPrefix}-NAT-Gateway-Charlie"
 
   ### Route private to NAT Gateways
   PrivateRouteToNATGatewayAlpha:
@@ -2405,6 +2493,17 @@ Resources:
       RouteTableId:
         Ref: RouteTablePrivateBravo
     Type: AWS::EC2::Route
+  PrivateRouteToNATGatewayCharlie:
+    DependsOn:
+    - NatGatewayCharlie
+    - RouteTablePrivateCharlie
+    Properties:
+      DestinationCidrBlock: 0.0.0.0/0
+      NatGatewayId:
+        Ref: NatGatewayCharlie
+      RouteTableId:
+        Ref: RouteTablePrivateCharlie
+    Type: AWS::EC2::Route
 
   ### Bind routing to subnets so no default routing
   PrivateSubnetAlphaRouteTableAssociation:
@@ -2427,6 +2526,16 @@ Resources:
       SubnetId:
         Ref: PrivateSubnetBravo
     Type: AWS::EC2::SubnetRouteTableAssociation
+  PrivateSubnetCharlieRouteTableAssociation:
+    DependsOn:
+    - RouteTablePrivateCharlie
+    - PrivateSubnetCharlie
+    Properties:
+      RouteTableId:
+        Ref: RouteTablePrivateCharlie
+      SubnetId:
+        Ref: PrivateSubnetCharlie
+    Type: AWS::EC2::SubnetRouteTableAssociation
   PublicSubnetAlphaRouteTableAssociation:
     DependsOn:
     - RouteTablePublicAlpha
@@ -2446,6 +2555,16 @@ Resources:
         Ref: RouteTablePublicBravo
       SubnetId:
         Ref: PublicSubnetBravo
+    Type: AWS::EC2::SubnetRouteTableAssociation
+  PublicSubnetCharlieRouteTableAssociation:
+    DependsOn:
+    - RouteTablePublicCharlie
+    - PublicSubnetCharlie
+    Properties:
+      RouteTableId:
+        Ref: RouteTablePublicCharlie
+      SubnetId:
+        Ref: PublicSubnetCharlie
     Type: AWS::EC2::SubnetRouteTableAssociation
 
 

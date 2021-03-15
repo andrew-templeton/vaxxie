@@ -246,7 +246,7 @@
                     [ "AWS/Lambda", "Invocations", "FunctionName", "vaxxbot3-UserPreferencePersister-1ONUD9AR6KS6G", { "id": "m1", "label": "Searches Added" } ],
                     [ "AWS/Lex", "RuntimeRequestCount", "BotAlias", "BETA", "Operation", "PostText", "BotName", "EchoVacccineSearcher", { "id": "m3", "label": "Messages To Vaxxie" } ],
                     [ ".", "MissedUtteranceCount", ".", ".", ".", ".", ".", ".", { "id": "m4", "visible": false, "label": "Missed Intents" } ],
-                    [ "Vaxxie", "NotificationsSent", "BotUserId", "U01PEHYJ8ET", { "id": "m2", "label": "Notifications Sent" } ]
+                    [ "Vaxxie", "NotificationsSent", "BotGroupIdentifier", "EchoVacccineSearcher", { "id": "m2" } ]
                 ],
                 "view": "singleValue",
                 "region": "us-east-1",
@@ -254,30 +254,6 @@
                 "period": 60,
                 "setPeriodToTimeRange": true,
                 "title": "KPIs For Period"
-            }
-        },
-        {
-            "type": "metric",
-            "x": 12,
-            "y": 12,
-            "width": 6,
-            "height": 6,
-            "properties": {
-                "metrics": [
-                    [ "Vaxxie", "NotificationsErrored", "BotUserId", "U01PEHYJ8ET", { "label": "Errored" } ],
-                    [ ".", "NotificationsSent", ".", ".", { "label": "Delivered" } ]
-                ],
-                "view": "timeSeries",
-                "stacked": true,
-                "region": "us-east-1",
-                "yAxis": {
-                    "left": {
-                        "min": 0
-                    }
-                },
-                "period": 60,
-                "stat": "Sum",
-                "title": "Appointment Slot Notifications"
             }
         },
         {
@@ -306,7 +282,32 @@
                     "right": {
                         "min": 0
                     }
-                }
+                },
+                "title": "Interaction Metrics Over Time"
+            }
+        },
+        {
+            "type": "metric",
+            "x": 12,
+            "y": 12,
+            "width": 6,
+            "height": 6,
+            "properties": {
+                "metrics": [
+                    [ "Vaxxie", "NotificationsSent", "BotGroupIdentifier", "EchoVacccineSearcher", { "label": "Sent" } ],
+                    [ ".", "NotificationsErrored", ".", ".", { "label": "Errored" } ]
+                ],
+                "view": "timeSeries",
+                "stacked": true,
+                "region": "us-east-1",
+                "yAxis": {
+                    "left": {
+                        "min": 0
+                    }
+                },
+                "stat": "Sum",
+                "period": 60,
+                "title": "Appointment Slot Notifications"
             }
         }
     ]

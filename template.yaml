@@ -52,6 +52,9 @@ Parameters:
   BotUserIdEs:
     Type: String
     Default: U01QYKDKPGT
+  ElasticsearchInstanceCount:
+    Type: Number
+    Default: 6
 Resources:
 
   SecretForSlackKey:
@@ -2572,7 +2575,327 @@ Resources:
         Ref: PublicSubnetCharlie
     Type: AWS::EC2::SubnetRouteTableAssociation
 
-
+  MainOperationalDashboard:
+    Type: AWS::CloudWatch::Dashboard
+    Properties:
+      DashboardName:
+        Fn::Sub: "${Namespace}${BotName}-MainOperationalDashboard"
+      DashboardBody:
+        Fn::Sub: |
+          {
+              "widgets": [
+                  {
+                      "type": "metric",
+                      "x": 0,
+                      "y": 12,
+                      "width": 6,
+                      "height": 6,
+                      "properties": {
+                          "metrics": [
+                              [ "AWS/Lex", "BotChannelRequestCount", "BotAlias", "BETA", "BotChannelName", "TexasVaccineUpdates", "BotName", "${Namespace}${BotName}", "Source", "SLACK", { "label": "Invocations" } ]
+                          ],
+                          "view": "timeSeries",
+                          "stacked": false,
+                          "region": "${AWS::Region}",
+                          "period": 60,
+                          "stat": "Sum",
+                          "title": "Overall Chat Invocations",
+                          "yAxis": {
+                              "left": {
+                                  "min": 0
+                              }
+                          }
+                      }
+                  },
+                  {
+                      "type": "metric",
+                      "x": 12,
+                      "y": 0,
+                      "width": 6,
+                      "height": 6,
+                      "properties": {
+                          "metrics": [
+                              [ "AWS/Lex", "RuntimeRequestCount", "BotAlias", "BETA", "Operation", "PostText", "BotName", "${Namespace}${BotName}", { "label": "Intent Hits" } ],
+                              [ ".", "MissedUtteranceCount", ".", ".", ".", ".", ".", ".", { "label": "Intent Misses" } ]
+                          ],
+                          "view": "timeSeries",
+                          "stacked": true,
+                          "region": "${AWS::Region}",
+                          "stat": "Sum",
+                          "period": 60,
+                          "title": "Missed Versus Hit Intents Over Time",
+                          "yAxis": {
+                              "left": {
+                                  "min": 0
+                              }
+                          }
+                      }
+                  },
+                  {
+                      "type": "metric",
+                      "x": 6,
+                      "y": 0,
+                      "width": 6,
+                      "height": 6,
+                      "properties": {
+                          "metrics": [
+                              [ "AWS/Lex", "RuntimeRequestCount", "BotAlias", "BETA", "Operation", "PostText", "BotName", "${Namespace}${BotName}", { "label": "Intent Hits" } ],
+                              [ ".", "MissedUtteranceCount", ".", ".", ".", ".", ".", ".", { "label": "Intent Misses" } ]
+                          ],
+                          "view": "pie",
+                          "region": "${AWS::Region}",
+                          "stat": "Sum",
+                          "period": 60,
+                          "setPeriodToTimeRange": true,
+                          "title": "Fraction Of NLP Misses"
+                      }
+                  },
+                  {
+                      "type": "metric",
+                      "x": 6,
+                      "y": 12,
+                      "width": 6,
+                      "height": 6,
+                      "properties": {
+                          "metrics": [
+                              [ "AWS/Lambda", "Errors", "FunctionName", "${AWS::StackName}-${ExternalCrawlerEnpoint}", { "label": "ExternalCrawlerEnpoint" } ],
+                              [ "...", "${HebCrawler}", { "label": "HebCrawler" } ],
+                              [ "...", "${PingCheckEs}", { "label": "PingCheckEs" } ],
+                              [ "...", "${PreferenceStreamHandler}", { "label": "PreferenceStreamHandler" } ],
+                              [ "...", "${SeedEsIndex}", { "label": "SeedEsIndex" } ],
+                              [ "...", "${SlotStreamHandler}", { "label": "SlotStreamHandler" } ],
+                              [ "...", "${UserPreferenceLister}", { "label": "UserPreferenceLister" } ],
+                              [ "...", "${UserPreferencePersister}", { "label": "UserPreferencePersister" } ],
+                              [ "...", "${UserPreferenceRemover}", { "label": "UserPreferenceRemover" } ],
+                              [ "...", "${UserPreferenceUpdater}", { "label": "UserPreferenceUpdater" } ],
+                              [ "...", "${UserQuestionFAQAnswerer}", { "label": "UserQuestionFAQAnswerer" } ],
+                              [ "...", "${VaccineSpotter}", { "label": "VaccineSpotter" } ]
+                          ],
+                          "view": "timeSeries",
+                          "stacked": true,
+                          "region": "${AWS::Region}",
+                          "stat": "Sum",
+                          "period": 60,
+                          "title": "Lambda Internal Errors",
+                          "yAxis": {
+                              "left": {
+                                  "min": 0
+                              }
+                          }
+                      }
+                  },
+                  {
+                      "type": "metric",
+                      "x": 0,
+                      "y": 6,
+                      "width": 6,
+                      "height": 6,
+                      "properties": {
+                          "metrics": [
+                              [ "AWS/Lambda", "Invocations", "FunctionName", "${AWS::StackName}-${ExternalCrawlerEnpoint}", { "label": "ExternalCrawlerEnpoint" } ],
+                              [ "...", "${HebCrawler}", { "label": "HebCrawler" } ],
+                              [ "...", "${PingCheckEs}", { "label": "PingCheckEs" } ],
+                              [ "...", "${PreferenceStreamHandler}", { "label": "PreferenceStreamHandler" } ],
+                              [ "...", "${SeedEsIndex}", { "label": "SeedEsIndex" } ],
+                              [ "...", "${SlotStreamHandler}", { "label": "SlotStreamHandler" } ],
+                              [ "...", "${UserPreferenceLister}", { "label": "UserPreferenceLister" } ],
+                              [ "...", "${UserPreferencePersister}", { "label": "UserPreferencePersister" } ],
+                              [ "...", "${UserPreferenceRemover}", { "label": "UserPreferenceRemover" } ],
+                              [ "...", "${UserPreferenceUpdater}", { "label": "UserPreferenceUpdater" } ],
+                              [ "...", "${UserQuestionFAQAnswerer}", { "label": "UserQuestionFAQAnswerer" } ],
+                              [ "...", "${VaccineSpotter}", { "label": "VaccineSpotter" } ]
+                          ],
+                          "view": "timeSeries",
+                          "stacked": true,
+                          "region": "${AWS::Region}",
+                          "stat": "Sum",
+                          "period": 60,
+                          "title": "System Invocations",
+                          "yAxis": {
+                              "left": {
+                                  "min": 0
+                              }
+                          }
+                      }
+                  },
+                  {
+                      "type": "metric",
+                      "x": 18,
+                      "y": 0,
+                      "width": 6,
+                      "height": 6,
+                      "properties": {
+                          "metrics": [
+                              [ "AWS/Lambda", "Invocations", "FunctionName", "${AWS::StackName}-${UserPreferenceLister}", { "label": "List Searches" } ],
+                              [ "...", "${UserPreferencePersister}", { "label": "Add A Search" } ],
+                              [ "...", "${UserPreferenceRemover}", { "label": "Remove A Search" } ],
+                              [ "...", "${UserPreferenceUpdater}", { "label": "Update A Search" } ],
+                              [ "...", "${UserQuestionFAQAnswerer}", { "label": "FAQ" } ]
+                          ],
+                          "view": "timeSeries",
+                          "stacked": true,
+                          "region": "${AWS::Region}",
+                          "stat": "Sum",
+                          "period": 60,
+                          "title": "Chat Invocations",
+                          "yAxis": {
+                              "left": {
+                                  "min": 0
+                              }
+                          }
+                      }
+                  },
+                  {
+                      "type": "metric",
+                      "x": 12,
+                      "y": 6,
+                      "width": 6,
+                      "height": 6,
+                      "properties": {
+                          "metrics": [
+                              [ "AWS/ES", "CPUUtilization", "DomainName", "${DomainName}", "ClientId", "${AWS::AccountId}" ]
+                          ],
+                          "view": "timeSeries",
+                          "stacked": false,
+                          "region": "${AWS::Region}",
+                          "stat": "Maximum",
+                          "period": 60,
+                          "title": "Elasticsearch CPU",
+                          "yAxis": {
+                              "left": {
+                                  "min": 0,
+                                  "max": 100
+                              }
+                          }
+                      }
+                  },
+                  {
+                      "type": "metric",
+                      "x": 18,
+                      "y": 6,
+                      "width": 6,
+                      "height": 6,
+                      "properties": {
+                          "metrics": [
+                              [ "AWS/ES", "SearchRate", "DomainName", "${DomainName}", "ClientId", "${AWS::AccountId}" ]
+                          ],
+                          "view": "timeSeries",
+                          "stacked": false,
+                          "region": "${AWS::Region}",
+                          "stat": "Sum",
+                          "period": 60,
+                          "yAxis": {
+                              "left": {
+                                  "min": 0
+                              }
+                          }
+                      }
+                  },
+                  {
+                      "type": "metric",
+                      "x": 6,
+                      "y": 6,
+                      "width": 6,
+                      "height": 6,
+                      "properties": {
+                          "metrics": [
+                              [ "AWS/ES", "IndexingLatency", "DomainName", "${DomainName}", "ClientId", "${AWS::AccountId}", { "yAxis": "right", "period": 60 } ],
+                              [ ".", "SearchLatency", ".", ".", ".", "." ]
+                          ],
+                          "view": "timeSeries",
+                          "stacked": false,
+                          "region": "${AWS::Region}",
+                          "stat": "p95",
+                          "period": 300,
+                          "title": "Elasticsearch Latencies",
+                          "yAxis": {
+                              "left": {
+                                  "min": 0
+                              },
+                              "right": {
+                                  "min": 0
+                              }
+                          }
+                      }
+                  },
+                  {
+                      "type": "metric",
+                      "x": 0,
+                      "y": 0,
+                      "width": 6,
+                      "height": 6,
+                      "properties": {
+                          "metrics": [
+                              [ { "expression": "100*(1-m4/m3)", "label": "Intent Hit Rate", "id": "e1", "region": "${AWS::Region}" } ],
+                              [ "AWS/Lambda", "Invocations", "FunctionName", "${UserPreferencePersister}", { "id": "m1", "label": "Searches Added" } ],
+                              [ "AWS/Lex", "RuntimeRequestCount", "BotAlias", "BETA", "Operation", "PostText", "BotName", "${Namespace}${BotName}", { "id": "m3", "label": "Messages To Vaxxie" } ],
+                              [ ".", "MissedUtteranceCount", ".", ".", ".", ".", ".", ".", { "id": "m4", "visible": false, "label": "Missed Intents" } ],
+                              [ "Vaxxie", "NotificationsSent", "BotGroupIdentifier", "${Namespace}${BotName}", { "id": "m2" } ]
+                          ],
+                          "view": "singleValue",
+                          "region": "${AWS::Region}",
+                          "stat": "Sum",
+                          "period": 60,
+                          "setPeriodToTimeRange": true,
+                          "title": "KPIs For Period"
+                      }
+                  },
+                  {
+                      "type": "metric",
+                      "x": 18,
+                      "y": 12,
+                      "width": 6,
+                      "height": 6,
+                      "properties": {
+                          "metrics": [
+                              [ { "expression": "100*(1-m2/m3)", "label": "Intent Hit Rate", "id": "e1" } ],
+                              [ "AWS/Lambda", "Invocations", "FunctionName", "${UserPreferencePersister}", { "yAxis": "right", "label": "Searches Added", "id": "m1" } ],
+                              [ "AWS/Lex", "MissedUtteranceCount", "BotAlias", "BETA", "Operation", "PostText", "BotName", "${Namespace}${BotName}", { "visible": false, "id": "m2" } ],
+                              [ ".", "RuntimeRequestCount", ".", ".", ".", ".", ".", ".", { "visible": false, "id": "m3" } ]
+                          ],
+                          "view": "timeSeries",
+                          "stacked": false,
+                          "region": "${AWS::Region}",
+                          "stat": "Sum",
+                          "period": 60,
+                          "yAxis": {
+                              "left": {
+                                  "min": 0,
+                                  "max": 100
+                              },
+                              "right": {
+                                  "min": 0
+                              }
+                          },
+                          "title": "Interaction Metrics Over Time"
+                      }
+                  },
+                  {
+                      "type": "metric",
+                      "x": 12,
+                      "y": 12,
+                      "width": 6,
+                      "height": 6,
+                      "properties": {
+                          "metrics": [
+                              [ "Vaxxie", "NotificationsSent", "BotGroupIdentifier", "${Namespace}${BotName}", { "label": "Sent" } ],
+                              [ ".", "NotificationsErrored", ".", ".", { "label": "Errored" } ]
+                          ],
+                          "view": "timeSeries",
+                          "stacked": true,
+                          "region": "${AWS::Region}",
+                          "yAxis": {
+                              "left": {
+                                  "min": 0
+                              }
+                          },
+                          "stat": "Sum",
+                          "period": 60,
+                          "title": "Appointment Slot Notifications"
+                      }
+                  }
+              ]
+          }
 
 
 
@@ -2585,11 +2908,14 @@ Resources:
         Ref: DomainName
       ElasticsearchClusterConfig:
         DedicatedMasterEnabled: "true"
-        InstanceCount: "2"
+        InstanceCount:
+          Ref: ElasticsearchInstanceCount
         ZoneAwarenessEnabled: "true"
         InstanceType: "m5.large.elasticsearch"
         DedicatedMasterType: "m5.large.elasticsearch"
         DedicatedMasterCount: "3"
+        ZoneAwarenessConfig:
+          AvailabilityZoneCount: 3
       ElasticsearchVersion: "7.9"
       EBSOptions:
         EBSEnabled: true
@@ -2612,6 +2938,7 @@ Resources:
         SubnetIds:
           - Ref: PrivateSubnetAlpha
           - Ref: PrivateSubnetBravo
+          - Ref: PrivateSubnetCharlie
         SecurityGroupIds:
           - Ref: ElaticsearchSecurityGroupAllowingAccessors
 

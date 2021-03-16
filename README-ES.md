@@ -109,6 +109,7 @@ Este bot solo recopila:
 3. La latitud y longitud del código postal que ingresó. NO usa su ubicación, solo un punto de una base de datos pública de códigos postales. La latitud y longitud reales frente al archivo de código postal está disponible en este código fuente abierto.
 4. La cantidad de millas que dijo que iría, para que el bot pueda decir qué disparos están lo suficientemente cerca para el usuario que envía.
 5. La hora en que solicitó la búsqueda y solicitó su primera búsqueda a Vaxxie. Esto es así cuando Vaxxie enumera las citas que solicitó anteriormente, puede poner una fecha, como "Me pidió en MM / DD que buscara en ZIP dentro de DISTANCE".
+6. La lengua que usa cuando hablas con Vaxxie, `en` o `es`.
 
 Este es mi usuario personal con Vaxxie, en forma completa, para demostrar que no hay información personal en uso.
 

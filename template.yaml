@@ -1768,7 +1768,31 @@ Resources:
           Type: Api
           Properties:
             Method: PUT
-            Path: /{provider}/{utime}
+            Path: /slots/{provider}/{utime}
+            Auth:
+              ApiKeyRequired: true
+  ChannelwideGeoBlanket:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: .
+      Runtime: nodejs12.x
+      Handler: channels.createGeoBlanket
+      MemorySize: 3008
+      Timeout: 300
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName:
+              Ref: PreferenceTable
+      Environment:
+        Variables:
+          SLOTS_TABLE:
+            Ref: PreferenceTable
+      Events:
+        PutSlots:
+          Type: Api
+          Properties:
+            Method: PUT
+            Path: /blanket/{channelId}/{lang}
             Auth:
               ApiKeyRequired: true
   SeedEsIndex:

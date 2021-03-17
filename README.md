@@ -111,10 +111,15 @@ This bot only collects:
 3.  The Latitude and Longitude of the zipcode you enter. It does NOT use your location, only a point from a public database of zipcodes. The actual latitude and longitude versus zipcode file is available in this open source code.
 4.  The number of miles you said you would go, so that the bot can tell which shots are close enough for the user you submit.
 5.  The time you requested the search, and asked for your very first search from Vaxxie. This is so when Vaxxie lists appointments you previously asked for, it can put a date on it, like "You asked me on MM/DD to look in ZIP within DISTANCE".
+6.  The language which you used to interact with the system, `en` or `es`.
 
 This is my personal user with Vaxxie, in complete form, to demonstrate there is no personal information in use.
 
 ![](./howto_images/en/016_MyVaxxieUser.png)
+
+### Tips
+
+If you want to tip me, which is NOT a charitable contribution and just goes right into my pocket, because you think is is cool: [Tip me <3](https://s3.amazonaws.com/tuplecdn/tip-andrew.html)
 
 ### Credits
 

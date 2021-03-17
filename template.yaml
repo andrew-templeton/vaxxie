@@ -1935,7 +1935,7 @@ Resources:
         HandleNewSlots:
           Type: DynamoDB
           Properties:
-            BatchSize: 1000
+            BatchSize: 100
             Enabled: true
             StartingPosition: LATEST
             Stream:

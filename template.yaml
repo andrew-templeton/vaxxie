@@ -55,6 +55,9 @@ Parameters:
   ElasticsearchInstanceCount:
     Type: Number
     Default: 6
+  SlackDomain:
+    Type: String
+    Default: texasvaccineupdates
 Resources:
 
   SecretForSlackKey:
@@ -1935,7 +1938,7 @@ Resources:
         HandleNewSlots:
           Type: DynamoDB
           Properties:
-            BatchSize: 100
+            BatchSize: 10
             Enabled: true
             StartingPosition: LATEST
             Stream:
@@ -2055,6 +2058,8 @@ Resources:
               Ref: SecretForSlackKey
       Environment:
         Variables:
+          SLACK_DOMAIN:
+            Ref: SlackDomain
           ANNOUNCEMENT_CHANNEL:
             Ref: AnnouncementChannel
           SLACK_SECRET:

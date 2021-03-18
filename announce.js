@@ -2,7 +2,7 @@
 const Axios = require('axios')
 const SlackInboundSecret = require('./src/slackInboundSecret')
 
-const { ANNOUNCEMENT_CHANNEL:channel, BOT_USER_ID_EN, BOT_USER_ID_ES } = process.env
+const { ANNOUNCEMENT_CHANNEL:channel, BOT_USER_ID_EN, BOT_USER_ID_ES, SLACK_DOMAIN } = process.env
 
 const LANGS = ['en', 'es']
 
@@ -24,70 +24,14 @@ const thyself = async () => {
           type: 'section',
           text: {
             type: 'mrkdwn',
-            text: `Hey there, I'm <@${BOT_USER_ID_EN}>! You can message me with <@${BOT_USER_ID_EN}> in your Direct Messages.`
-          }
-        },
-        {
-          type: 'section',
-          text: {
-            type: 'mrkdwn',
-            text: `If you message me and ask something like "Can you find me a vaccine?", I will ask you where and how far. Then, I'll look for vaccines inside that area 24/7 just for you, and send you a push notification on Slack if I am able to find any indicated availability from providers!`
-          }
-        },
-        {
-          type: 'section',
-          text: {
-            type: 'mrkdwn',
-            text: `I search HEB, Walmart, Walgreens, Riteaid, CVS, and several more national providers. I do not currently have a way to find a specific vaccine type, and I look for any of the J&J, Moderna, and Pfizer vaccines, so keep that in mind. Trademarks property of their respective owners, not affiliated with any seller or manufacturer of vaccines.`
-          }
-        },
-        {
-          type: 'section',
-          text: {
-            type: 'mrkdwn',
-            text: `You can't talk to me in the channels like #general. I will only reply in direct messages, so make sure you message me there. I show up just like a person would.`
-          }
-        },
-        {
-          type: 'section',
-          text: {
-            type: 'mrkdwn',
-            text: `I am run by one of the developers here, with the approval of the owner of this Slack. Remember, there are many, many users in our Slack now, so while I know you might have questions, do your best to self-help using my Frequently Asked Questions and visual/textual help guide, <https://github.com/andrew-templeton/vaxxie/blob/master/README.md|which you can find here!>`
-          }
-        },
-        {
-          type: 'section',
-          text: {
-            type: 'mrkdwn',
-            text: `For those of you worried about privacy (as you all should be), I only collect the zipcode, your search radius, the latitude and longitude of the zipcode's post office, and your anonymous Slack ID (which does NOT have your name, and just looks like this: \`UABCD1234\`). I need this information to find the right vaccines, and I need your Slack ID so I can send the push message to the right place.`
-          }
-        },
-        {
-          type: 'section',
-          text: {
-            type: 'mrkdwn',
-            text: `You can set up multiple searches using me, ask me to "list my searches" if you want to see where I'm looking for you, and *I work nationally*, on any zipcode in the country, not just Texas!`
-          }
-        },
-        {
-          type: 'section',
-          text: {
-            type: 'mrkdwn',
-            text: `So help your family, help your friends, help your neighbors, and let's get some shots in arms!`
-          }
-        },
-        {
-          type: 'section',
-          text: {
-            type: 'mrkdwn',
-            text: `Much love,`
-          }
-        },
-        {
-          type: 'section',
-          text: {
-            type: 'mrkdwn',
-            text: `:heart::syringe::heart: <@${BOT_USER_ID_EN}>`
+            text: `:wave::skin-tone-3: I’m <@${BOT_USER_ID_EN}>.
+I’m a search tool to help you find vaccines!
+<https://${SLACK_DOMAIN}.slack.com/app_redirect?channel=${BOT_USER_ID_EN}|Click here to get started!>
+You can talk to me with these phrases:
+“Find me an appointment"
+“Can you find me a vaccine?”
+<https://github.com/andrew-templeton/vaxxie/blob/master/README.md|Learn more about me here.>
+If <@${BOT_USER_ID_EN}> helped you, you can tip the developer to keep it going! This is separate than donations made to Texas Vaccine Updates. <https://www.patreon.com/andrewtempleton?fan_landing=true|Click here to contribute>.`
           }
         },
         {
@@ -101,16 +45,6 @@ const thyself = async () => {
       ]
     }
     await Axios.post(SLACK_API, announcement, config)
-    await Axios.post(SLACK_API, {
-      channel,
-      blocks: [
-        {
-          type: 'image',
-          image_url: 'https://s3.amazonaws.com/07bad1ce-5fe6-449f-9e1c-52cd6d38ee6f/vaxxie.gif',
-          alt_text: 'animated image of the Vaxxie bot being used in direct messages in Slack'
-        }
-      ]
-    }, config)
   }
   const announceEs = async () => {
     const config = {
@@ -125,70 +59,12 @@ const thyself = async () => {
           type: 'section',
           text: {
             type: 'mrkdwn',
-            text: `¡Hola, soy <@${BOT_USER_ID_ES}>! Puedes enviarme un mensaje con <@${BOT_USER_ID_ES}> en tus mensajes directos.`
-          }
-        },
-        {
-          type: 'section',
-          text: {
-            type: 'mrkdwn',
-            text: `Si me envía un mensaje y pregunta algo como "¿Puede encontrarme una vacuna?", Le preguntaré dónde y qué tan lejos. Luego, buscaré vacunas dentro de esa área las 24 horas del día, los 7 días de la semana, solo para usted, y le enviaré una notificación automática en Slack si puedo encontrar alguna disponibilidad indicada de los proveedores.`
-          }
-        },
-        {
-          type: 'section',
-          text: {
-            type: 'mrkdwn',
-            text: `Busco HEB, Walmart, Walgreens, Riteaid, CVS y varios proveedores nacionales más. Actualmente no tengo una forma de encontrar un tipo de vacuna específico, y busco cualquiera de las vacunas J&J, Moderna y Pfizer, así que téngalo en cuenta. Marcas registradas propiedad de sus respectivos dueños, no afiliadas a ningún vendedor o fabricante de vacunas.`
-          }
-        },
-        {
-          type: 'section',
-          text: {
-            type: 'mrkdwn',
-            text: `No puedes hablarme en los canales como #general. Solo responderé en mensajes directos, así que asegúrese de enviarme un mensaje allí. Me presento como lo haría una persona.`
-          }
-        },
-        {
-          type: 'section',
-          text: {
-            type: 'mrkdwn',
-            text: `Estoy dirigido por uno de los desarrolladores aquí, con la aprobación del propietario de este Slack. Recuerde, hay muchos, muchos usuarios en nuestro Slack ahora, así que aunque sé que puede tener preguntas, haga todo lo posible por autoayuda utilizando mi guía de preguntas frecuentes y ayuda visual / textual, <https://github.com/andrew-templeton/vaxxie/blob/master/README-ES.md|¡que puede encontrar aquí!>`
-          }
-        },
-        {
-          type: 'section',
-          text: {
-            type: 'mrkdwn',
-            text: `Para aquellos de ustedes preocupados por la privacidad (como todos deberían estar), solo recopilo el código postal, su radio de búsqueda, la latitud y longitud de la oficina postal del código postal y su ID anónimo de Slack (que NO tiene su nombre, y solo tiene este aspecto: \`UABCD1234\`). Necesito esta información para encontrar las vacunas adecuadas, y necesito su ID de Slack para poder enviar el mensaje push al lugar correcto.`
-          }
-        },
-        {
-          type: 'section',
-          text: {
-            type: 'mrkdwn',
-            text: `Puedes configurar varias búsquedas con mí, pedirme que "enumere mis búsquedas" si quieres ver dónde te estoy buscando y *yo trabajo a nivel nacional*, en cualquier código postal del país, no solo en Texas.`
-          }
-        },
-        {
-          type: 'section',
-          text: {
-            type: 'mrkdwn',
-            text: `¡Así que ayude a su familia, ayude a sus amigos, ayude a sus vecinos y pongámonos en marcha!`
-          }
-        },
-        {
-          type: 'section',
-          text: {
-            type: 'mrkdwn',
-            text: `Mucho amor,`
-          }
-        },
-        {
-          type: 'section',
-          text: {
-            type: 'mrkdwn',
-            text: `:heart::syringe::heart: <@${BOT_USER_ID_ES}>`
+            text: `Hola, soy <@${BOT_USER_ID_ES}>.
+- Soy un herramienta de búsqueda *nacional*, *gratis* y *personal*. Te ayudo *encontrar vacunas* a lo largo de varios proveedores *en un lugar*.
+- *Proveedores:* HEB, Walmart, Walgreens, Riteaid, CVS, y unos más.
+- <https://${SLACK_DOMAIN}.slack.com/app_redirect?channel=${BOT_USER_ID_ES}|Haga clic aquí> y dígale a <@${BOT_USER_ID_ES}> "encuéntrame una cita". puedes crear múltiples búsquedas basadas en distancias dentro de tu código postal.
+- Trata "me puedes encontrar una vacuna", "mis búsquedas", o "remueve una búsqueda" si querría cancelar una búsqueda. <https://github.com/andrew-templeton/vaxxie/blob/master/README-ES.md|Preguntas comunes>
+La pasión de vacunar la gente es lo que motiva a la desarrollador quien hace <@${BOT_USER_ID_ES}>. las cuestas relacionadas con esto herramienta esta cubierto solamente por el creador de <@${BOT_USER_ID_ES}>. Si te ayudó vaxxie, ¡considera a donar al desarrollador para mantener su operaciones! Donaciones son apartes de las donaciones a Texas Vaccine Updates. <https://www.patreon.com/andrewtempleton?fan_landing=true|Haga clic aquí>`
           }
         },
         {
@@ -202,20 +78,11 @@ const thyself = async () => {
       ]
     }
     await Axios.post(SLACK_API, announcement, config)
-    // return await Axios.post(SLACK_API, {
-    //   channel,
-    //   blocks: [
-    //     {
-    //       type: 'image',
-    //       image_url: 'https://s3.amazonaws.com/07bad1ce-5fe6-449f-9e1c-52cd6d38ee6f/vaxxie.gif',
-    //       alt_text: 'imagen animada de Vaxxie, usado en mensajes directos en Slack'
-    //     }
-    //   ]
-    // }, config)
   }
 
+
+  // await announceEs()
   await announceEn()
-  await announceEs()
 }
 
 module.exports = {

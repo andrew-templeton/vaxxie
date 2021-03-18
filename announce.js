@@ -31,15 +31,14 @@ You can talk to me with these phrases:
 “Find me an appointment"
 “Can you find me a vaccine?”
 <https://github.com/andrew-templeton/vaxxie/blob/master/README.md|Learn more about me here.>
-If <@${BOT_USER_ID_EN}> helped you, you can tip the developer to keep it going! This is separate than donations made to Texas Vaccine Updates. <https://www.patreon.com/andrewtempleton?fan_landing=true|Click here to contribute>.`
+If <@${BOT_USER_ID_EN}> helped you, you can tip the developer to keep it going! This is separate than donations made to Texas Vaccine Updates. <https://www.patreon.com/andrewtempleton?fan_landing=true|Patreon> / <https://vaxxie.me|Paypal Tip Jar>.`
           }
         },
         {
           type: 'section',
           text: {
             type: 'mrkdwn',
-            text: `(legal stuff I have to put since one could technically misuse the bot :anguished:)
-  <https://github.com/andrew-templeton/vaxxie/blob/master/README.md#no-warranty-for-any-purpose|NO WARRANTY FOR ANY PURPOSE>, <https://github.com/andrew-templeton/vaxxie#you-are-solely-responsible-for-verifying-eligibility-of-the-people-you-use-to-book-this-for|YOU ARE SOLELY RESPOSIBLE FOR VERIFYING ELIGIBILITY OF THE PEOPLE YOU USE TO BOOK THIS FOR>, <https://github.com/andrew-templeton/vaxxie#no-representations-of-medical-advice-legal-advice-or-statements-of-fact|NO REPRESENTATIONS OF MEDICAL ADVICE, LEGAL ADVICE, OR STATEMENTS OF FACT>, <https://github.com/andrew-templeton/vaxxie#not-fit-for-use-by-minors-or-dependents|NOT FIT FOR USE BY MINORS OR DEPENDENTS>, <https://github.com/andrew-templeton/vaxxie#fair-use|FAIR USE>, <https://github.com/andrew-templeton/vaxxie#may-shut-down-at-the-sole-discretion-of-operators|MAY SHUT DOWN AT THE SOLE DISCRETION OF OPERATORS>`
+            text: `<https://github.com/andrew-templeton/vaxxie/blob/master/README.md#no-warranty-for-any-purpose|legal stuff I have to put since one could technically misuse the bot :anguished:>`
           }
         }
       ]

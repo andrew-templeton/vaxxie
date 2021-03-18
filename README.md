@@ -119,7 +119,7 @@ This is my personal user with Vaxxie, in complete form, to demonstrate there is 
 
 ### Tips
 
-If you want to tip me, which is NOT a charitable contribution and just goes right into my pocket, because you think is is cool: [Tip me <3](https://s3.amazonaws.com/tuplecdn/tip-andrew.html)
+If you want to tip me, which is NOT a charitable contribution and just goes right into my pocket, because you think is is cool: [Tip me on paypal](https://vaxxie.me) or [be a Patron](https://www.patreon.com/andrewtempleton?fan_landing=true) <3 
 
 ### Credits
 

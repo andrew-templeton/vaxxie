@@ -1867,6 +1867,14 @@ Resources:
           - Ref: PrivateSubnetAlpha
           - Ref: PrivateSubnetBravo
           - Ref: PrivateSubnetCharlie
+  SlotGeoSearchQueue:
+    Type: AWS::SQS::Queue
+    Properties:
+      VisibilityTimeout: 930
+      RedrivePolicy:
+        Fn::Sub: '{"deadLetterTargetArn": "${SlotGeoSearchQueueDLQ.Arn}", "maxReceiveCount": 3}'
+  SlotGeoSearchQueueDLQ:
+    Type: AWS::SQS::Queue
   NotificationsQueue:
     Type: AWS::SQS::Queue
     Properties:
@@ -1875,6 +1883,52 @@ Resources:
         Fn::Sub: '{"deadLetterTargetArn": "${NotificationsQueueDLQ.Arn}", "maxReceiveCount": 3}'
   NotificationsQueueDLQ:
     Type: AWS::SQS::Queue
+  SlotGeoSearchStreamHandler:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: .
+      Runtime: nodejs12.x
+      Handler: streamers.slotGeosearch
+      MemorySize: 3008
+      Timeout: 900
+      Policies:
+        - SQSSendMessagePolicy:
+            QueueName:
+              Fn::GetAtt:
+                - NotificationsQueue
+                - QueueName
+        - SQSPollerPolicy:
+            QueueName:
+              Fn::GetAtt:
+                - SlotGeoSearchQueue
+                - QueueName
+      Environment:
+        Variables:
+          ES_DOMAIN_ENDPOINT:
+            Fn::GetAtt:
+              - ElasticsearchDomain
+              - DomainEndpoint
+          PREFERENCES_INDEX: preferences
+          SLOTS_INDEX: slots
+          NOTIFICATION_QUEUE_URL:
+            Ref: NotificationsQueue
+          HARD_SHUTOFF: "false"
+      VpcConfig:
+        SecurityGroupIds:
+          - Ref: ElasticsearchAccessorGroup
+        SubnetIds:
+          - Ref: PrivateSubnetAlpha
+          - Ref: PrivateSubnetBravo
+          - Ref: PrivateSubnetCharlie
+      Events:
+        HandleSlotGeoSearchQueue:
+          Type: SQS
+          Properties:
+            Enabled: true
+            Queue:
+              Fn::GetAtt:
+                - SlotGeoSearchQueue
+                - Arn
   SlotStreamHandler:
     Type: AWS::Serverless::Function
     Properties:
@@ -1884,20 +1938,11 @@ Resources:
       MemorySize: 3008
       Timeout: 900
       Policies:
-        - Version: '2012-10-17'
-          Statement:
-            - Effect: Allow
-              Action:
-                - cloudwatch:PutMetricData
-              Resource: "*"
         - SQSSendMessagePolicy:
             QueueName:
               Fn::GetAtt:
-                - NotificationsQueue
+                - SlotGeoSearchQueue
                 - QueueName
-        - DynamoDBCrudPolicy:
-            TableName:
-              Ref: SlotsTable
         - Version: '2012-10-17'
           Statement:
             - Effect: "Allow"
@@ -1918,14 +1963,9 @@ Resources:
             Fn::GetAtt:
               - ElasticsearchDomain
               - DomainEndpoint
-          SLOTS_TABLE:
-            Ref: SlotsTable
-          PREFERENCES_TABLE:
-            Ref: PreferenceTable
-          PREFERENCES_INDEX: preferences
           SLOTS_INDEX: slots
-          NOTIFICATION_QUEUE_URL:
-            Ref: NotificationsQueue
+          SLOT_GEOSEARCH_QUEUE_URL:
+            Ref: SlotGeoSearchQueue
           HARD_SHUTOFF: "false"
       VpcConfig:
         SecurityGroupIds:

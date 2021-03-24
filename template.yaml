@@ -1920,7 +1920,7 @@ Resources:
           - Ref: PrivateSubnetAlpha
           - Ref: PrivateSubnetBravo
           - Ref: PrivateSubnetCharlie
-      ReservedConcurrentExecutions: 10
+      ReservedConcurrentExecutions: 15
       Events:
         HandleSlotGeoSearchQueue:
           Type: SQS

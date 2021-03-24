@@ -76,13 +76,13 @@ Resources:
         'Fn::Sub': '${Namespace}${BotName}Es'
       abortStatement:
         messages:
-          - content: 'Lo siento, pero no puedo entender lo que acaba de decir. La forma principal de utilizarme es preguntar: Encuéntrame una vacuna. Si desea saber más sobre este bot, diríjase a https://github.com/andrew-templeton/vaxxie/blob/master/README-ES.md, o si desea saber más sobre las Vaccine Updates Texas (Actualizaciones de Vacunas de Texas), ¡vaya aquí! https://www.notion.so/General-FAQ-cdcb7fa2d55c4179bf94efab1665a40c'
+          - content: 'Lo siento, pero no puedo entender lo que acaba de decir. La forma principal de utilizarme es preguntar: Encuentrame una vacuna. Si desea saber mas sobre este bot, diríjase a https://github.com/andrew-templeton/vaxxie/blob/master/README-ES.md, o si desea saber mas sobre las Vaccine Updates Texas (Actualizaciones de Vacunas de Texas), vaya aqui! https://www.notion.so/General-FAQ-cdcb7fa2d55c4179bf94efab1665a40c'
             contentType: PlainText
       childDirected: true
       clarificationPrompt:
         maxAttempts: 1
         messages:
-          - content: 'Lo siento, pero no puedo entender lo que acaba de decir. La forma principal de utilizarme es preguntar: Encuéntrame una vacuna. Si desea saber más sobre este bot, diríjase a https://github.com/andrew-templeton/vaxxie/blob/master/README-ES.md, o si desea saber más sobre las Vaccine Updates Texas (Actualizaciones de Vacunas de Texas), ¡vaya aquí! https://www.notion.so/General-FAQ-cdcb7fa2d55c4179bf94efab1665a40c'
+          - content: 'Lo siento, pero no puedo entender lo que acaba de decir. La forma principal de utilizarme es preguntar: Encuentrame una vacuna. Si desea saber mas sobre este bot, dirijase a https://github.com/andrew-templeton/vaxxie/blob/master/README-ES.md, o si desea saber mas sobre las Vaccine Updates Texas (Actualizaciones de Vacunas de Texas), vaya aqui! https://www.notion.so/General-FAQ-cdcb7fa2d55c4179bf94efab1665a40c'
             contentType: PlainText
       description:
         Ref: BotDescription
@@ -151,7 +151,7 @@ Resources:
       confirmationPrompt:
         maxAttempts: 1
         messages:
-          - content: Debería comenzar a buscar citas cerca {Zipcode}, dentro {Distance} millas?
+          - content: Deberia comenzar a buscar citas cerca {Zipcode}, dentro {Distance} millas?
             contentType: PlainText
       description:
         Ref: IntentDescription
@@ -165,9 +165,9 @@ Resources:
               - Arn
       rejectionStatement:
         messages:
-          - content: 'Está bien, no voy a buscar esto'
+          - content: 'Esta bien, no voy a buscar esto'
             contentType: PlainText
-          - content: 'Cancelé su búsqueda.'
+          - content: 'Cancele su busqueda.'
             contentType: PlainText
       sampleUtterances:
         - añadir una nueva búsqueda
@@ -205,11 +205,11 @@ Resources:
           valueElicitationPrompt:
             maxAttempts: 1
             messages:
-              - content: ¿A qué distancia está bien para obtener una vacuna, en millas?
+              - content: A que distancia esta bien para obtener una vacuna, en millas?
                 contentType: PlainText
-              - content: ¿Qué tan lejos está dispuesto a viajar, en millas, a una cita?
+              - content: Que tan lejos esta dispuesto a viajar, en millas, a una cita?
                 contentType: PlainText
-              - content: Cuanto mayor sea el área que está dispuesto a ir, mejor. ¿Cuántas millas debería buscar?
+              - content: Cuanto mayor sea el area que esta dispuesto a ir, mejor. Cuantas millas deberia buscar?
                 contentType: PlainText
         - name: Zipcode
           description: The zip code of the search origin
@@ -226,9 +226,9 @@ Resources:
           valueElicitationPrompt:
             maxAttempts: 1
             messages:
-              - content: ¿Cuál es el código postal de que le gustaría que empiece su búsqueda?
+              - content: Cual es el codigo postal de que le gustaria que empiece su busqueda?
                 contentType: PlainText
-              - content: ¿Cuál es su código postal?
+              - content: Cual es su codigo postal?
                 contentType: PlainText
 
   SearchEditLexPermissionEs:
@@ -252,7 +252,7 @@ Resources:
       confirmationPrompt:
         maxAttempts: 1
         messages:
-          - content: ¿Debo reemplazar número de búsqueda {Searchnumber} para las citas cerca {Zipcode}, dentro de {Distance} millas?
+          - content: Debo reemplazar numero de busqueda {Searchnumber} para las citas cerca {Zipcode}, dentro de {Distance} millas?
             contentType: PlainText
       description: Allow the user to update an existing search
       fulfillmentActivity:
@@ -265,9 +265,9 @@ Resources:
               - Arn
       rejectionStatement:
         messages:
-          - content: Está bien, no actualizaré su búsqueda.
+          - content: esta bien, no actualizare su busqueda.
             contentType: PlainText
-          - content: Cancelé su cambio a la búsqueda.
+          - content: Cancele su cambio a la busqueda.
             contentType: PlainText
       sampleUtterances:
         - actualiza de la búsqueda a la que {Distance} desde mi {Zipcode}
@@ -309,7 +309,7 @@ Resources:
           valueElicitationPrompt:
             maxAttempts: 1
             messages:
-              - content: '¿Cuál de búsqueda que desea reemplazar? Cuando la lista de las búsquedas aparecen tienen una etiqueta como 1 o 2 al lado de ellos. Usted debe decirme qué número se trata. Si necesita ver los números de nuevo, me re-preguntar por su lista de búsquedas actuales. Si sólo alguna vez me pidió que mirara en un solo lugar, sólo decir 1. Gracias!'
+              - content: 'Cual de busqueda que desea reemplazar? Cuando la lista de las busquedas aparecen tienen una etiqueta como 1 o 2 al lado de ellos. Usted debe decirme que numero se trata. Si necesita ver los numeros de nuevo, me re-preguntar por su lista de busquedas actuales. Si solo alguna vez me pidio que mirara en un solo lugar, solo decir 1. Gracias!'
                 contentType: PlainText
         - name: Distance
           description: The distance in miles to allow notifications
@@ -327,11 +327,11 @@ Resources:
           valueElicitationPrompt:
             maxAttempts: 1
             messages:
-              - content: ¿A qué distancia está bien para obtener una vacuna, en millas, para la búsqueda actualizada?
+              - content: A que distancia esta bien para obtener una vacuna, en millas, para la busqueda actualizada?
                 contentType: PlainText
-              - content: ¿Hasta dónde estás dispuesto a viajar, en millas, a una cita, para esta búsqueda actualizada?
+              - content: Hasta donde estas dispuesto a viajar, en millas, a una cita, para esta busqueda actualizada?
                 contentType: PlainText
-              - content: Cuanto más grande es el área que está dispuesto a ir, mejor. ¿Cuántas millas debería buscar esta búsqueda actualizada?
+              - content: Cuanto mas grande es el area que esta dispuesto a ir, mejor. Cuantas millas deberia buscar esta busqueda actualizada?
                 contentType: PlainText
         - name: Zipcode
           description: The zip code of the search origin
@@ -348,9 +348,9 @@ Resources:
           valueElicitationPrompt:
             maxAttempts: 1
             messages:
-              - content: ¿Cuál es el código postal que le gustaría que empiece su búsqueda actualizada de?
+              - content: Cual es el codigo postal que le gustaria que empiece su busqueda actualizada de?
                 contentType: PlainText
-              - content: ¿Cuál es su código postal a utilizar para la búsqueda actualizada?
+              - content: Cual es su codigo postal a utilizar para la busqueda actualizada?
                 contentType: PlainText
 
   SearchRemoveLexPermissionEs:
@@ -374,7 +374,7 @@ Resources:
       confirmationPrompt:
         maxAttempts: 1
         messages:
-          - content: ¿Debo quitar número de búsqueda {Searchnumber}?
+          - content: Debo quitar numero de busqueda {Searchnumber}?
             contentType: PlainText
       description: Allow the user to remove an existing search
       fulfillmentActivity:
@@ -387,9 +387,9 @@ Resources:
               - Arn
       rejectionStatement:
         messages:
-          - content: Está bien, no voy a actualizar su búsqueda.
+          - content: Esta bien, no voy a actualizar su busqueda.
             contentType: PlainText
-          - content: Me cancelaron su cambio a su búsqueda.
+          - content: Me cancelaron su cambio a su busqueda.
             contentType: PlainText
       sampleUtterances:
         - borrar búsqueda {Searchnumber}
@@ -420,7 +420,7 @@ Resources:
           valueElicitationPrompt:
             maxAttempts: 1
             messages:
-              - content: '¿Cuál búsqueda que desea eliminar? Cuando la lista de las búsquedas, que tienen una etiqueta como 1 o 2 al lado de ellos. Usted debe decirme de qué número se trata. Si necesita ver los números de nuevo, me re-preguntar a su lista de búsquedas actuales. Si sólo alguna vez me pidió que mirara en un solo lugar, sólo decir 1. Gracias!'
+              - content: 'Cual busqueda que desea eliminar? Cuando la lista de las busquedas, que tienen una etiqueta como 1 o 2 al lado de ellos. Usted debe decirme de que numero se trata. Si necesita ver los numeros de nuevo, me re-preguntar a su lista de busquedas actuales. Si solo alguna vez me pidio que mirara en un solo lugar, solo decir 1. Gracias!'
                 contentType: PlainText
 
   SearchListLambdaLexPermissionEs:
@@ -1872,7 +1872,7 @@ Resources:
     Properties:
       VisibilityTimeout: 930
       RedrivePolicy:
-        Fn::Sub: '{"deadLetterTargetArn": "${SlotGeoSearchQueueDLQ.Arn}", "maxReceiveCount": 3}'
+        Fn::Sub: '{"deadLetterTargetArn": "${SlotGeoSearchQueueDLQ.Arn}", "maxReceiveCount": 1}'
   SlotGeoSearchQueueDLQ:
     Type: AWS::SQS::Queue
   NotificationsQueue:
@@ -1880,7 +1880,7 @@ Resources:
     Properties:
       VisibilityTimeout: 35
       RedrivePolicy:
-        Fn::Sub: '{"deadLetterTargetArn": "${NotificationsQueueDLQ.Arn}", "maxReceiveCount": 3}'
+        Fn::Sub: '{"deadLetterTargetArn": "${NotificationsQueueDLQ.Arn}", "maxReceiveCount": 1}'
   NotificationsQueueDLQ:
     Type: AWS::SQS::Queue
   SlotGeoSearchStreamHandler:
@@ -1920,11 +1920,13 @@ Resources:
           - Ref: PrivateSubnetAlpha
           - Ref: PrivateSubnetBravo
           - Ref: PrivateSubnetCharlie
+      ReservedConcurrentExecutions: 10
       Events:
         HandleSlotGeoSearchQueue:
           Type: SQS
           Properties:
             Enabled: true
+            BatchSize: 1
             Queue:
               Fn::GetAtt:
                 - SlotGeoSearchQueue
@@ -2822,18 +2824,22 @@ Resources:
                       "height": 6,
                       "properties": {
                           "metrics": [
-                              [ "AWS/ES", "CPUUtilization", "DomainName", "${DomainName}", "ClientId", "${AWS::AccountId}" ]
+                              [ "AWS/ES", "CPUUtilization", "DomainName", "${DomainName}", "ClientId", "${AWS::AccountId}" ],
+                              [ ".", "SearchRate", ".", ".", ".", ".", { "yAxis": "right" } ]
                           ],
                           "view": "timeSeries",
                           "stacked": false,
                           "region": "${AWS::Region}",
                           "stat": "Maximum",
                           "period": 60,
-                          "title": "Elasticsearch CPU",
+                          "title": "Elasticsearch Demand",
                           "yAxis": {
                               "left": {
                                   "min": 0,
                                   "max": 100
+                              },
+                              "right": {
+                                  "min": 0
                               }
                           }
                       }
@@ -2846,7 +2852,9 @@ Resources:
                       "height": 6,
                       "properties": {
                           "metrics": [
-                              [ "AWS/ES", "SearchRate", "DomainName", "${DomainName}", "ClientId", "${AWS::AccountId}" ]
+                            [ "AWS/SQS", "NumberOfMessagesSent", "QueueName", "${SlotGeoSearchQueue.QueueName}" ],
+                            [ ".", "NumberOfMessagesDeleted", ".", "." ],
+                            [ ".", "ApproximateNumberOfMessagesVisible", ".", ".", { "yAxis": "right" } ]
                           ],
                           "view": "timeSeries",
                           "stacked": false,
@@ -2856,8 +2864,12 @@ Resources:
                           "yAxis": {
                               "left": {
                                   "min": 0
+                              },
+                              "right": {
+                                "min": 0
                               }
-                          }
+                          },
+                          "title": "GeoSearch Queue"
                       }
                   },
                   {

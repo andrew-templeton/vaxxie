@@ -37,6 +37,6 @@
     "node-html-parser": "^3.0.4"
   },
   "devDependencies": {
-    "aws-sdk": "^2.859.0"
+    "aws-sdk": "^2.875.0"
   }
 }

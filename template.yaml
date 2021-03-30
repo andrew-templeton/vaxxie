@@ -1680,7 +1680,7 @@ Resources:
       CodeUri: .
       Runtime: nodejs12.x
       Handler: fulfillment.addSearch
-      MemorySize: 3008
+      MemorySize: 128
       Timeout: 300
       Policies:
         - DynamoDBCrudPolicy:
@@ -1696,7 +1696,7 @@ Resources:
       CodeUri: .
       Runtime: nodejs12.x
       Handler: fulfillment.updateSearch
-      MemorySize: 3008
+      MemorySize: 128
       Timeout: 300
       Policies:
         - DynamoDBCrudPolicy:
@@ -1712,7 +1712,7 @@ Resources:
       CodeUri: .
       Runtime: nodejs12.x
       Handler: fulfillment.removeSearch
-      MemorySize: 3008
+      MemorySize: 128
       Timeout: 300
       Policies:
         - DynamoDBCrudPolicy:
@@ -1728,7 +1728,7 @@ Resources:
       CodeUri: .
       Runtime: nodejs12.x
       Handler: fulfillment.listSearches
-      MemorySize: 3008
+      MemorySize: 128
       Timeout: 300
       Policies:
         - DynamoDBCrudPolicy:
@@ -1744,7 +1744,7 @@ Resources:
       CodeUri: .
       Runtime: nodejs12.x
       Handler: fulfillment.faqs
-      MemorySize: 3008
+      MemorySize: 128
       Timeout: 300
       Environment:
         Variables:
@@ -1756,7 +1756,7 @@ Resources:
       CodeUri: .
       Runtime: nodejs12.x
       Handler: crawlers.external
-      MemorySize: 3008
+      MemorySize: 128
       Timeout: 300
       Policies:
         - DynamoDBCrudPolicy:
@@ -1780,7 +1780,7 @@ Resources:
       CodeUri: .
       Runtime: nodejs12.x
       Handler: channels.createGeoBlanket
-      MemorySize: 3008
+      MemorySize: 128
       Timeout: 300
       Policies:
         - DynamoDBCrudPolicy:
@@ -1804,7 +1804,7 @@ Resources:
       CodeUri: .
       Runtime: nodejs12.x
       Handler: seed.es
-      MemorySize: 3008
+      MemorySize: 128
       Timeout: 300
       Environment:
         Variables:
@@ -1831,7 +1831,7 @@ Resources:
       CodeUri: .
       Runtime: nodejs12.x
       Handler: seed.pingEs
-      MemorySize: 3008
+      MemorySize: 128
       Timeout: 300
       Environment:
         Variables:
@@ -1852,7 +1852,7 @@ Resources:
       CodeUri: .
       Runtime: nodejs12.x
       Handler: seed.execute
-      MemorySize: 3008
+      MemorySize: 128
       Timeout: 300
       Environment:
         Variables:
@@ -1889,7 +1889,7 @@ Resources:
       CodeUri: .
       Runtime: nodejs12.x
       Handler: streamers.slotGeosearch
-      MemorySize: 3008
+      MemorySize: 128
       Timeout: 900
       Policies:
         - SQSSendMessagePolicy:
@@ -1937,7 +1937,7 @@ Resources:
       CodeUri: .
       Runtime: nodejs12.x
       Handler: streamers.slots
-      MemorySize: 3008
+      MemorySize: 128
       Timeout: 900
       Policies:
         - SQSSendMessagePolicy:
@@ -2092,7 +2092,7 @@ Resources:
       CodeUri: .
       Runtime: nodejs12.x
       Handler: announce.thyself
-      MemorySize: 3008
+      MemorySize: 128
       Timeout: 300
       Policies:
         - AWSSecretsManagerGetSecretValuePolicy:
@@ -2123,7 +2123,7 @@ Resources:
       CodeUri: .
       Runtime: nodejs12.x
       Handler: crawlers.vaccinespotter
-      MemorySize: 3008
+      MemorySize: 1024
       Timeout: 300
       Policies:
         - DynamoDBCrudPolicy:
@@ -2145,7 +2145,7 @@ Resources:
       CodeUri: .
       Runtime: nodejs12.x
       Handler: crawlers.heb
-      MemorySize: 3008
+      MemorySize: 128
       Timeout: 300
       Policies:
         - DynamoDBCrudPolicy:

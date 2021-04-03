@@ -2110,12 +2110,12 @@ Resources:
             Ref: BotUserIdEn
           BOT_USER_ID_ES:
             Ref: BotUserIdEs
-      Events:
-        AnnounceEverySixHours:
-          Type: Schedule
-          Properties:
-            Enabled: true
-            Schedule: rate(6 hours)
+      # Events:
+      #   AnnounceEverySixHours:
+      #     Type: Schedule
+      #     Properties:
+      #       Enabled: true
+      #       Schedule: rate(6 hours)
 
   VaccineSpotter:
     Type: AWS::Serverless::Function
@@ -2133,12 +2133,12 @@ Resources:
         Variables:
           SLOTS_TABLE:
             Ref: SlotsTable
-      Events:
-        VaccineSpotter:
-          Type: Schedule
-          Properties:
-            Enabled: true
-            Schedule: rate(1 minute)
+      # Events:
+      #   VaccineSpotter:
+      #     Type: Schedule
+      #     Properties:
+      #       Enabled: true
+      #       Schedule: rate(7 minutes)
   HebCrawler:
     Type: AWS::Serverless::Function
     Properties:
@@ -2155,12 +2155,12 @@ Resources:
         Variables:
           SLOTS_TABLE:
             Ref: SlotsTable
-      Events:
-        HebCollector:
-          Type: Schedule
-          Properties:
-            Enabled: true
-            Schedule: rate(1 minute)
+      # Events:
+      #   HebCollector:
+      #     Type: Schedule
+      #     Properties:
+      #       Enabled: true
+      #       Schedule: rate(7 minutes)
   SlotsTable:
     Type: AWS::DynamoDB::Table
     Properties:

@@ -122,10 +122,6 @@ Este es mi usuario personal con Vaxxie, en forma completa, para demostrar que no
  - [Trevor Hedley](https://github.com/codeisafourletter) Ayudó con el modelo de lenguaje para "encontrarme una vacuna" por código postal.
  - [Vaccine Spotter API](https://www.vaccinespotter.org/) * Uso intensivo * de sus datos para impulsar las visitas de Vaxxie. No estoy afiliado pero los amo * mucho *.
 
-# NO AFILIADO A TEXASUPDATES.COM (Texas Vaccine Updates)
-
-James Kip ([¡Mira su perfil de GitHub!](Https://github.com/jameskip)) y [Sara Dubuque](https://www.linkedin.com/in/saradubs/) de [Vaccine Updates Texas](https://general.texasupdates.com) son seres humanos maravillosos y me permitieron usar Slack como mi banco de pruebas. Los desarrolladores y usuarios adicionales en Slack fueron fundamentales para probar Vaxxie cuando era solo un pequeño bot. Dicho esto, no están afiliados a este bot de ninguna manera formal y NO deben ser contactados para obtener ayuda. Los desarrolladores pueden abrir problemas de GitHub contra el bot. Los usuarios habituales pueden comunicarse conmigo ([@ayetempleton](https://twitter.com/ayetempleton) en Twitter - yo hablo español) a través de un tweet o un mensaje directo si tienen preguntas; sin embargo, eso nos lleva a la garantía ...;)
-
 
 # ¡SIN GARANTÍA PARA NINGÚN PROPÓSITO!
 

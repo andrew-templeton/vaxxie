@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "build": "sam build --template ./template.yaml",
-    "deploy": "sam deploy --template-file .aws-sam/build/template.yaml --stack-name vaxxbot3 --parameter-overrides Namespace=Echo ElasticsearchInstanceCount=18 EnvironmentPrefix=Vaxxbot VpcSecondOctet=101 --s3-bucket 07bad1ce-5fe6-449f-9e1c-52cd6d38ee6f --capabilities CAPABILITY_IAM CAPABILITY_NAMED_IAM",
+    "deploy": "sam deploy --template-file .aws-sam/build/template.yaml --stack-name vaxxbot3 --parameter-overrides Namespace=Echo ElasticsearchInstanceCount=3 EnvironmentPrefix=Vaxxbot VpcSecondOctet=101 --s3-bucket 07bad1ce-5fe6-449f-9e1c-52cd6d38ee6f --capabilities CAPABILITY_IAM CAPABILITY_NAMED_IAM",
     "kick": "npm run build && npm run deploy"
   },
   "repository": {

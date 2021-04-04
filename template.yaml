@@ -2114,12 +2114,12 @@ Resources:
             Ref: BotUserIdEn
           BOT_USER_ID_ES:
             Ref: BotUserIdEs
-      # Events:
-      #   AnnounceEverySixHours:
-      #     Type: Schedule
-      #     Properties:
-      #       Enabled: true
-      #       Schedule: rate(6 hours)
+      Events:
+        AnnounceEverySixHours:
+          Type: Schedule
+          Properties:
+            Enabled: true
+            Schedule: rate(6 hours)
 
   VaccineSpotter:
     Type: AWS::Serverless::Function
@@ -2137,12 +2137,12 @@ Resources:
         Variables:
           SLOTS_TABLE:
             Ref: SlotsTable
-      # Events:
-      #   VaccineSpotter:
-      #     Type: Schedule
-      #     Properties:
-      #       Enabled: true
-      #       Schedule: rate(7 minutes)
+      Events:
+        VaccineSpotter:
+          Type: Schedule
+          Properties:
+            Enabled: true
+            Schedule: rate(1 minute)
   HebCrawler:
     Type: AWS::Serverless::Function
     Properties:
@@ -2171,14 +2171,10 @@ Resources:
       AttributeDefinitions:
         - AttributeName: id
           AttributeType: S
-        - AttributeName: x
-          AttributeType: S
       BillingMode: PAY_PER_REQUEST
       KeySchema:
         - AttributeName: id
           KeyType: HASH
-        - AttributeName: x
-          KeyType: RANGE
       StreamSpecification:
         StreamViewType: NEW_IMAGE
   PreferenceTable:
@@ -2187,14 +2183,10 @@ Resources:
       AttributeDefinitions:
         - AttributeName: userId
           AttributeType: S
-        - AttributeName: x
-          AttributeType: S
       BillingMode: PAY_PER_REQUEST
       KeySchema:
         - AttributeName: userId
           KeyType: HASH
-        - AttributeName: x
-          KeyType: RANGE
       StreamSpecification:
         StreamViewType: NEW_IMAGE
 

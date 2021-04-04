@@ -24,12 +24,21 @@ const thyself = async () => {
           type: 'section',
           text: {
             type: 'mrkdwn',
-            text: `<@channel> IMPORTANT: I am sorry to say, but Vaxxie is shutting down. James, the founder of this slack, has been MIA and not responsing to messages for a week now.
-            Today, he kicked all of the volunteer organizers out of the slack, including me (the developer of Vaxxie).
-            I am saddened to say that I have to recommend to everyone here to delete your account, or just stop sending messages in this account.
-            I am posting this via the Vaxxie bot [1] so you all know this is legitimate [2] because he removed my ability to contact people through my Slack account.
-            We did not have any argument, and I do not know what is going on. I am concerned that with the founder going "rogue" with no communication that the Slack is not a safe place anymore.
-            If you tipped me for this, YOU HAVE BEEN FULLY REFUNDED ALREADY. I am working on solutions to make Vaxxie available in a new environment.`
+            text: `:wave::skin-tone-3: I’m <@${BOT_USER_ID_EN}>.
+I’m a search tool to help you find vaccines!
+<https://${SLACK_DOMAIN}.slack.com/app_redirect?channel=${BOT_USER_ID_EN}|Click here to get started!>
+You can talk to me with these phrases:
+“Find me an appointment"
+“Can you find me a vaccine?”
+<https://github.com/andrew-templeton/vaxxie/blob/master/README.md|Learn more about me here.>
+If <@${BOT_USER_ID_EN}> helped you, you can tip the developer to keep it going! <https://www.patreon.com/andrewtempleton?fan_landing=true|Patreon> / <https://vaxxie.me|Paypal Tip Jar>.`
+          }
+        },
+        {
+          type: 'section',
+          text: {
+            type: 'mrkdwn',
+            text: `<https://github.com/andrew-templeton/vaxxie/blob/master/README.md#no-warranty-for-any-purpose|legal stuff I have to put since one could technically misuse the bot :anguished:>`
           }
         }
       ]
@@ -54,7 +63,7 @@ const thyself = async () => {
 - *Proveedores:* HEB, Walmart, Walgreens, Riteaid, CVS, y unos más.
 - <https://${SLACK_DOMAIN}.slack.com/app_redirect?channel=${BOT_USER_ID_ES}|Haga clic aquí> y dígale a <@${BOT_USER_ID_ES}> "encuéntrame una cita". puedes crear múltiples búsquedas basadas en distancias dentro de tu código postal.
 - Trata "me puedes encontrar una vacuna", "mis búsquedas", o "remueve una búsqueda" si querría cancelar una búsqueda. <https://github.com/andrew-templeton/vaxxie/blob/master/README-ES.md|Preguntas comunes>
-La pasión de vacunar la gente es lo que motiva a la desarrollador quien hace <@${BOT_USER_ID_ES}>. las cuestas relacionadas con esto herramienta esta cubierto solamente por el creador de <@${BOT_USER_ID_ES}>. Si te ayudó vaxxie, ¡considera a donar al desarrollador para mantener su operaciones! Donaciones son apartes de las donaciones a Texas Vaccine Updates. <https://www.patreon.com/andrewtempleton?fan_landing=true|Haga clic aquí>`
+La pasión de vacunar la gente es lo que motiva a la desarrollador quien hace <@${BOT_USER_ID_ES}>. las cuestas relacionadas con esto herramienta esta cubierto solamente por el creador de <@${BOT_USER_ID_ES}>. Si te ayudó vaxxie, ¡considera a donar al desarrollador para mantener su operaciones! <https://www.patreon.com/andrewtempleton?fan_landing=true|Haga clic aquí>`
           }
         },
         {

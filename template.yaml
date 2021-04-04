@@ -45,19 +45,19 @@ Parameters:
     Default: test
   AnnouncementChannel:
     Type: String
-    Default: C01L4DNQY8K
+    Default: C01T438NM9B
   BotUserIdEn:
     Type: String
-    Default: U01PEHYJ8ET
+    Default: U01TE5GUTB6
   BotUserIdEs:
     Type: String
-    Default: U01QYKDKPGT
+    Default: U01T17AQH0W
   ElasticsearchInstanceCount:
     Type: Number
     Default: 6
   SlackDomain:
     Type: String
-    Default: texasvaccineupdates
+    Default: lifzar
 Resources:
 
   SecretForSlackKey:
@@ -76,13 +76,15 @@ Resources:
         'Fn::Sub': '${Namespace}${BotName}Es'
       abortStatement:
         messages:
-          - content: 'Lo siento, pero no puedo entender lo que acaba de decir. La forma principal de utilizarme es preguntar: Encuentrame una vacuna. Si desea saber mas sobre este bot, diríjase a https://github.com/andrew-templeton/vaxxie/blob/master/README-ES.md, o si desea saber mas sobre las Vaccine Updates Texas (Actualizaciones de Vacunas de Texas), vaya aqui! https://www.notion.so/General-FAQ-cdcb7fa2d55c4179bf94efab1665a40c'
+          - content: 'Lo siento, pero no puedo entender lo que acaba de decir. La forma principal de utilizarme es preguntar: Encuentrame una vacuna. Si desea saber mas sobre este bot, diríjase a https://github.com/andrew-templeton/vaxxie/blob/master/README-ES.md'
+          #, o si desea saber mas sobre las Vaccine Updates Texas (Actualizaciones de Vacunas de Texas), vaya aqui! https://www.notion.so/General-FAQ-cdcb7fa2d55c4179bf94efab1665a40c'
             contentType: PlainText
       childDirected: true
       clarificationPrompt:
         maxAttempts: 1
         messages:
-          - content: 'Lo siento, pero no puedo entender lo que acaba de decir. La forma principal de utilizarme es preguntar: Encuentrame una vacuna. Si desea saber mas sobre este bot, dirijase a https://github.com/andrew-templeton/vaxxie/blob/master/README-ES.md, o si desea saber mas sobre las Vaccine Updates Texas (Actualizaciones de Vacunas de Texas), vaya aqui! https://www.notion.so/General-FAQ-cdcb7fa2d55c4179bf94efab1665a40c'
+          - content: 'Lo siento, pero no puedo entender lo que acaba de decir. La forma principal de utilizarme es preguntar: Encuentrame una vacuna. Si desea saber mas sobre este bot, dirijase a https://github.com/andrew-templeton/vaxxie/blob/master/README-ES.md'
+          #, o si desea saber mas sobre las Vaccine Updates Texas (Actualizaciones de Vacunas de Texas), vaya aqui! https://www.notion.so/General-FAQ-cdcb7fa2d55c4179bf94efab1665a40c'
             contentType: PlainText
       description:
         Ref: BotDescription
@@ -1621,13 +1623,15 @@ Resources:
         'Fn::Sub': '${Namespace}${BotName}'
       abortStatement:
         messages:
-          - content: 'I am sorry, but I cannot understand what you just said. The main way to use me is to ask: Find me a vaccine. If you want to know more about this bot, head to https://github.com/andrew-templeton/vaxxie/blob/master/README.md, or if you want to know more about Texas Vaccine Updates, go here! https://www.notion.so/General-FAQ-cdcb7fa2d55c4179bf94efab1665a40c'
+          - content: 'I am sorry, but I cannot understand what you just said. The main way to use me is to ask: Find me a vaccine. If you want to know more about this bot, head to https://github.com/andrew-templeton/vaxxie/blob/master/README.md'
+          #, or if you want to know more about Texas Vaccine Updates, go here! https://www.notion.so/General-FAQ-cdcb7fa2d55c4179bf94efab1665a40c'
             contentType: PlainText
       childDirected: true
       clarificationPrompt:
         maxAttempts: 1
         messages:
-          - content: 'I am sorry, but I cannot understand what you just said. The main way to use me is to ask: Find me a vaccine. If you want to know more about this bot, head to https://github.com/andrew-templeton/vaxxie/blob/master/README.md, or if you want to know more about Texas Vaccine Updates, go here! https://www.notion.so/General-FAQ-cdcb7fa2d55c4179bf94efab1665a40c'
+          - content: 'I am sorry, but I cannot understand what you just said. The main way to use me is to ask: Find me a vaccine. If you want to know more about this bot, head to https://github.com/andrew-templeton/vaxxie/blob/master/README.md'
+          # , or if you want to know more about Texas Vaccine Updates, go here! https://www.notion.so/General-FAQ-cdcb7fa2d55c4179bf94efab1665a40c'
             contentType: PlainText
       description:
         Ref: BotDescription
@@ -2167,10 +2171,14 @@ Resources:
       AttributeDefinitions:
         - AttributeName: id
           AttributeType: S
+        - AttributeName: x
+          AttributeType: S
       BillingMode: PAY_PER_REQUEST
       KeySchema:
         - AttributeName: id
           KeyType: HASH
+        - AttributeName: x
+          KeyType: RANGE
       StreamSpecification:
         StreamViewType: NEW_IMAGE
   PreferenceTable:
@@ -2179,10 +2187,14 @@ Resources:
       AttributeDefinitions:
         - AttributeName: userId
           AttributeType: S
+        - AttributeName: x
+          AttributeType: S
       BillingMode: PAY_PER_REQUEST
       KeySchema:
         - AttributeName: userId
           KeyType: HASH
+        - AttributeName: x
+          KeyType: RANGE
       StreamSpecification:
         StreamViewType: NEW_IMAGE
 
@@ -2663,7 +2675,7 @@ Resources:
                       "height": 6,
                       "properties": {
                           "metrics": [
-                              [ "AWS/Lex", "BotChannelRequestCount", "BotAlias", "BETA", "BotChannelName", "TexasVaccineUpdates", "BotName", "${Namespace}${BotName}", "Source", "SLACK", { "label": "Invocations" } ]
+                              [ "AWS/Lex", "BotChannelRequestCount", "BotAlias", "BETA", "BotChannelName", "VaxxieMe", "BotName", "${Namespace}${BotName}", "Source", "SLACK", { "label": "Invocations" } ]
                           ],
                           "view": "timeSeries",
                           "stacked": false,

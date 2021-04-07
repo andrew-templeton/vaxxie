@@ -57,7 +57,7 @@ Parameters:
     Default: 6
   SlackDomain:
     Type: String
-    Default: lifzar
+    Default: find-me-a-vax
 Resources:
 
   SecretForSlackKey:
@@ -1623,15 +1623,13 @@ Resources:
         'Fn::Sub': '${Namespace}${BotName}'
       abortStatement:
         messages:
-          - content: 'I am sorry, but I cannot understand what you just said. The main way to use me is to ask: Find me a vaccine. If you want to know more about this bot, head to https://github.com/andrew-templeton/vaxxie/blob/master/README.md'
-          #, or if you want to know more about Texas Vaccine Updates, go here! https://www.notion.so/General-FAQ-cdcb7fa2d55c4179bf94efab1665a40c'
+          - content: 'I am sorry. Try, "find me a vaccine" or "remove my search". For more info: <https://github.com/andrew-templeton/vaxxie/blob/master/README.md | Read Here>'
             contentType: PlainText
       childDirected: true
       clarificationPrompt:
         maxAttempts: 1
         messages:
-          - content: 'I am sorry, but I cannot understand what you just said. The main way to use me is to ask: Find me a vaccine. If you want to know more about this bot, head to https://github.com/andrew-templeton/vaxxie/blob/master/README.md'
-          # , or if you want to know more about Texas Vaccine Updates, go here! https://www.notion.so/General-FAQ-cdcb7fa2d55c4179bf94efab1665a40c'
+          - content: 'I am sorry. Try, "find me a vaccine" or "remove my search". For more info: <https://github.com/andrew-templeton/vaxxie/blob/master/README.md | Read Here>'
             contentType: PlainText
       description:
         Ref: BotDescription
